@@ -8,9 +8,9 @@ interface Props {
 
 const { title = "タルムードに学ぶ", currentTab = "today" } = Astro.props;
 
-// import.meta.env.BASE_URL は常に末尾スラッシュ付き
-// ローカル: "/" / GitHub Pages: "/talmudfinance-web/"
-const base = import.meta.env.BASE_URL;
+// ローカル: "/" / GitHub Pages: "/TalmudFinance/"
+const rawBase = import.meta.env.BASE_URL || "/";
+const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
 ---
 
 <!doctype html>
@@ -29,8 +29,8 @@ const base = import.meta.env.BASE_URL;
     </main>
     <nav class="tab-nav">
       <a href={base} class={currentTab === "today" ? "active" : ""}>今日</a>
-      <a href={`${base}market`} class={currentTab === "market" ? "active" : ""}>マーケット</a>
-      <a href={`${base}teachings`} class={currentTab === "teachings" ? "active" : ""}>教え一覧</a>
+      <a href={`${base}market/`} class={currentTab === "market" ? "active" : ""}>マーケット</a>
+      <a href={`${base}teachings/`} class={currentTab === "teachings" ? "active" : ""}>教え一覧</a>
     </nav>
   </body>
 </html>
