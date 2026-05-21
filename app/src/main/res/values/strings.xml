@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">タルムードに学ぶ</string>
+    <string name="app_subtitle">賢者の金融市場</string>
+
+    <!-- Tabs -->
+    <string name="tab_home">今日</string>
+    <string name="tab_market">マーケット</string>
+    <string name="tab_talmud">教え一覧</string>
+
+    <!-- Home -->
+    <string name="todays_teaching">今日のタルムード</string>
+    <string name="market_summary">主要指標サマリー</string>
+    <string name="lesson_label">本日の教訓</string>
+    <string name="source_label">出典</string>
+    <string name="financial_interpretation_label">金融視点での解釈</string>
+
+    <!-- Market -->
+    <string name="market_japan">日本株</string>
+    <string name="market_us">米国株</string>
+    <string name="market_fx">為替</string>
+    <string name="market_crypto">暗号資産</string>
+    <string name="last_updated">最終更新</string>
+    <string name="reload">再読み込み</string>
+    <string name="loading">読み込み中…</string>
+    <string name="error_loading">データを取得できませんでした</string>
+    <string name="retry">再試行</string>
+</resources>

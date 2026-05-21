@@ -1,0 +1,84 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import QuoteRow from "@/components/QuoteRow.astro";
+import { fetchAll, type MarketCategory } from "@/lib/market";
+
+const allQuotes = await fetchAll();
+
+const categories: { key: MarketCategory; label: string; emoji: string }[] = [
+  { key: "JP_STOCK", label: "日本株", emoji: "🗾" },
+  { key: "US_STOCK", label: "米国株", emoji: "🗽" },
+  { key: "FX", label: "為替", emoji: "💴" },
+  { key: "CRYPTO", label: "暗号資産", emoji: "₿" },
+];
+
+const grouped = categories.map((c) => ({
+  ...c,
+  quotes: allQuotes.filter((q) => q.category === c.key),
+}));
+
+const now = new Date();
+const lastUpdated = now.toLocaleString("ja-JP", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Tokyo",
+});
+---
+
+<Layout title="マーケット - タルムードに学ぶ" currentTab="market">
+  <header>
+    <h1>マーケット</h1>
+    <p class="muted">最終更新: {lastUpdated} (JST)</p>
+  </header>
+
+  {grouped.map((g) => (
+    <section id={g.key.toLowerCase()}>
+      <h2>{g.emoji} {g.label}</h2>
+      <div class="card">
+        {g.quotes.length === 0 ? (
+          <p class="muted">このカテゴリのデータを取得できませんでした。</p>
+        ) : (
+          g.quotes.map((q) => <QuoteRow quote={q} />)
+        )}
+      </div>
+    </section>
+  ))}
+
+  <nav class="anchor-nav">
+    {categories.map((c) => (
+      <a href={`#${c.key.toLowerCase()}`}>{c.label}</a>
+    ))}
+  </nav>
+</Layout>
+
+<style>
+  header {
+    margin-bottom: 16px;
+  }
+  section {
+    margin-bottom: 24px;
+  }
+  section h2 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+  .anchor-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: sticky;
+    bottom: 60px;
+    background: var(--bg);
+    padding: 8px 0;
+    border-top: 1px solid var(--ink-light);
+  }
+  .anchor-nav a {
+    padding: 6px 12px;
+    background: var(--bg-elevated);
+    border-radius: 16px;
+    font-size: 0.85rem;
+  }
+</style>

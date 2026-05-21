@@ -1,0 +1,30 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+**/build/
+**/.gradle/
+*.apk
+*.aab
+
+# Firebase（公開リポジトリにする場合はコメントアウトを外す。
+# プライベートリポジトリならコミットしても OK）
+# app/google-services.json
+
+# ============================================================
+# Web/Astro (monorepo: web/ サブプロジェクト)
+# ============================================================
+web/dist/
+web/.output/
+web/node_modules/
+web/.astro/
+web/.env
+web/.env.production
+web/.env.local
+web/npm-debug.log*

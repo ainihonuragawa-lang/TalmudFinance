@@ -1,0 +1,27 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TeachingCard from "@/components/TeachingCard.astro";
+import { loadTeachings } from "@/lib/teachings";
+
+const collection = await loadTeachings();
+const teachings = collection.teachings;
+---
+
+<Layout title="教え一覧 - タルムードに学ぶ" currentTab="teachings">
+  <header>
+    <h1>タルムードの教え</h1>
+    <p class="muted">{teachings.length}件の教え</p>
+  </header>
+
+  <div class="list">
+    {teachings.map((t) => <TeachingCard teaching={t} />)}
+  </div>
+</Layout>
+
+<style>
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  currentTab?: "today" | "market" | "teachings";
+}
+
+const { title = "タルムードに学ぶ", currentTab = "today" } = Astro.props;
+
+// import.meta.env.BASE_URL は常に末尾スラッシュ付き
+// ローカル: "/" / GitHub Pages: "/talmudfinance-web/"
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#22201C" />
+    <meta name="description" content="古代ユダヤの知恵×現代の市場データ。毎日1つのタルムードの教えと、19の主要指標を1画面で。" />
+    <title>{title}</title>
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+  </head>
+  <body>
+    <main>
+      <slot />
+    </main>
+    <nav class="tab-nav">
+      <a href={base} class={currentTab === "today" ? "active" : ""}>今日</a>
+      <a href={`${base}market`} class={currentTab === "market" ? "active" : ""}>マーケット</a>
+      <a href={`${base}teachings`} class={currentTab === "teachings" ? "active" : ""}>教え一覧</a>
+    </nav>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+/* TalmudFinance Web - グローバルスタイル
+   Android版 (Color.kt) の配色をそのまま CSS Variables 化 */
+
+:root {
+  /* 賢者の色 */
+  --sage-gold: #C9A24A;
+  --sage-gold-dark: #8C7228;
+  --parchment: #F6EFD9;
+  --parchment-deep: #EDE2C0;
+  --ink-dark: #22201C;
+  --ink-soft: #3E3A33;
+  --ink-light: #6B6660;
+
+  /* 相場の色 */
+  --market-up: #1B8A4D;
+  --market-down: #C0392B;
+  --market-flat: #6B6660;
+
+  /* タイポ */
+  --font-sans: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic UI",
+    "Meiryo UI", sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: var(--ink-dark);
+    --bg-elevated: var(--ink-soft);
+    --text: var(--parchment);
+    --text-muted: var(--parchment-deep);
+    --accent: var(--sage-gold);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: var(--parchment);
+    --bg-elevated: var(--parchment-deep);
+    --text: var(--ink-dark);
+    --text-muted: var(--ink-soft);
+    --accent: var(--sage-gold-dark);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px;
+  padding-bottom: 80px; /* 下部ナビ分の余白 */
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  margin: 0 0 0.5em 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1.1rem; }
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+/* 下部タブナビ */
+.tab-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--ink-light);
+  z-index: 100;
+}
+
+.tab-nav a {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  color: var(--text-muted);
+  font-size: 0.85em;
+  border: none;
+}
+
+.tab-nav a.active {
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--bg);
+}
+
+.tab-nav a:hover {
+  text-decoration: none;
+  background: var(--bg);
+}
+
+/* カード共通 */
+.card {
+  background: var(--bg-elevated);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.card.featured {
+  background: var(--sage-gold);
+  color: var(--ink-dark);
+}
+
+.card.featured h2,
+.card.featured .source,
+.card.featured strong {
+  color: var(--ink-dark);
+}

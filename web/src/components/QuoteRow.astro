@@ -1,0 +1,73 @@
+---
+import type { MarketQuote } from "@/lib/market";
+import { getChange } from "@/lib/market";
+
+interface Props {
+  quote: MarketQuote;
+}
+const { quote } = Astro.props;
+const { change, percent, direction } = getChange(quote);
+
+const sign = direction === "up" ? "+" : "";
+const priceFmt = quote.symbol.endsWith("=X")
+  ? quote.price.toFixed(4)
+  : quote.price.toLocaleString("ja-JP", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+---
+
+<div class="row">
+  <div class="left">
+    <div class="name">{quote.displayName}</div>
+    <div class="symbol">{quote.symbol}</div>
+  </div>
+  <div class="right">
+    <div class="price">{priceFmt}</div>
+    <div class={`change ${direction}`}>
+      {sign}{change.toFixed(2)} ({sign}{percent.toFixed(2)}%)
+    </div>
+  </div>
+</div>
+
+<style>
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ink-light);
+  }
+  .row:last-child {
+    border-bottom: none;
+  }
+  .left {
+    flex: 1;
+    min-width: 0;
+  }
+  .name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .symbol {
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+  .right {
+    text-align: right;
+    flex-shrink: 0;
+    padding-left: 12px;
+  }
+  .price {
+    font-weight: 500;
+  }
+  .change {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .change.up { color: var(--market-up); }
+  .change.down { color: var(--market-down); }
+  .change.flat { color: var(--market-flat); }
+</style>

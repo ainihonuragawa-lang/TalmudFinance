@@ -1,0 +1,69 @@
+name: Build and Deploy Web (Astro) to GitHub Pages
+
+on:
+  # main ブランチへの push 時（web/ と app/assets の変更のみで発火）
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "app/src/main/assets/talmud_teachings.json"
+      - ".github/workflows/deploy-web.yml"
+  # 30分ごとに自動再ビルド（Yahoo Finance 最新データ取得）
+  schedule:
+    - cron: "*/30 * * * *"
+  # 手動実行
+  workflow_dispatch:
+
+# GitHub Pages へのデプロイに必要な権限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時実行を1つに制限（古い実行はキャンセル）
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site (fetches market data at build time)
+        run: npm run build
+        env:
+          NODE_ENV: production
+          ASTRO_SITE: https://${{ github.repository_owner }}.github.io
+          ASTRO_BASE: /${{ github.event.repository.name }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

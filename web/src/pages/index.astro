@@ -1,0 +1,42 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TeachingCard from "@/components/TeachingCard.astro";
+import QuoteRow from "@/components/QuoteRow.astro";
+import { loadTeachings, getTodaysTeaching } from "@/lib/teachings";
+import { fetchAll } from "@/lib/market";
+
+const collection = await loadTeachings();
+const teaching = getTodaysTeaching(collection.teachings);
+
+// ホームには主要4指標だけ表示
+const allQuotes = await fetchAll();
+const summarySymbols = ["^N225", "^GSPC", "JPY=X", "BTC-USD"];
+const summary = summarySymbols
+  .map((s) => allQuotes.find((q) => q.symbol === s))
+  .filter((q): q is NonNullable<typeof q> => q !== undefined);
+---
+
+<Layout title="今日 - タルムードに学ぶ" currentTab="today">
+  <header>
+    <h1>タルムードに学ぶ</h1>
+    <p class="muted">賢者の金融市場</p>
+  </header>
+
+  <TeachingCard teaching={teaching} featured showDate />
+
+  <h2>主要指標サマリー</h2>
+  <div class="card">
+    {summary.length === 0 ? (
+      <p class="muted">市場データを取得できませんでした。</p>
+    ) : (
+      summary.map((q) => <QuoteRow quote={q} />)
+    )}
+  </div>
+
+</Layout>
+
+<style>
+  header {
+    margin-bottom: 16px;
+  }
+</style>

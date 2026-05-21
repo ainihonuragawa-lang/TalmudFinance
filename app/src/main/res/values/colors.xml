@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 賢者の落ち着いた金色とインクの色合い -->
+    <color name="sage_gold">#C9A24A</color>
+    <color name="parchment">#F6EFD9</color>
+    <color name="ink_dark">#22201C</color>
+    <color name="ink_soft">#3E3A33</color>
+    <color name="market_up">#1B8A4D</color>
+    <color name="market_down">#C0392B</color>
+    <color name="neutral_gray">#6B6660</color>
+</resources>

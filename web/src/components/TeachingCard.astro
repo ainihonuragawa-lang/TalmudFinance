@@ -1,0 +1,42 @@
+---
+import type { TalmudTeaching } from "@/lib/teachings";
+interface Props {
+  teaching: TalmudTeaching;
+  featured?: boolean;
+  showDate?: boolean;
+}
+const { teaching, featured = false, showDate = false } = Astro.props;
+
+const today = new Date();
+const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+---
+
+<article class={`card ${featured ? "featured" : ""}`}>
+  {showDate && <div class="muted">{dateStr}</div>}
+  {featured && <h2>今日のタルムード</h2>}
+  {!featured && <div class="muted">#{teaching.id} {teaching.lesson}</div>}
+  <p class="teaching">「{teaching.teaching}」</p>
+  <p class="source">— {teaching.source}</p>
+  {featured && <hr />}
+  <p><strong>{featured ? "本日の教訓" : ""}: {teaching.lesson}</strong></p>
+  {featured && <p><strong>金融視点での解釈</strong></p>}
+  <p>{teaching.financial_interpretation}</p>
+</article>
+
+<style>
+  .teaching {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0.5em 0;
+  }
+  .source {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: 0 0 1em 0;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid rgba(34, 32, 28, 0.25);
+    margin: 0.8em 0;
+  }
+</style>

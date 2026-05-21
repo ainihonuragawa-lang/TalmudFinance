@@ -1,0 +1,17 @@
+{
+  "name": "talmudfinance-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "タルムードに学ぶ ― 賢者の金融市場 (Web/PWA版)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.0"
+  }
+}
