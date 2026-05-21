@@ -1,15 +1,19 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
-import { fetchAll, type MarketCategory } from "@/lib/market";
+import MarketInsightCard from "@/components/MarketInsightCard.astro";
+import { buildMarketInsight, fetchAll, type MarketCategory } from "@/lib/market";
 
 const allQuotes = await fetchAll();
+const insight = buildMarketInsight(allQuotes);
 
 const categories: { key: MarketCategory; label: string; emoji: string }[] = [
   { key: "JP_STOCK", label: "日本株", emoji: "🗾" },
   { key: "US_STOCK", label: "米国株", emoji: "🗽" },
+  { key: "ETF", label: "ETF", emoji: "◇" },
   { key: "FX", label: "為替", emoji: "💴" },
   { key: "CRYPTO", label: "暗号資産", emoji: "₿" },
+  { key: "COMMODITY_MACRO", label: "商品・マクロ", emoji: "◆" },
 ];
 
 const grouped = categories.map((c) => ({
@@ -33,6 +37,8 @@ const lastUpdated = now.toLocaleString("ja-JP", {
     <h1>マーケット</h1>
     <p class="muted">最終更新: {lastUpdated} (JST)</p>
   </header>
+
+  <MarketInsightCard insight={insight} />
 
   {grouped.map((g) => (
     <section id={g.key.toLowerCase()}>

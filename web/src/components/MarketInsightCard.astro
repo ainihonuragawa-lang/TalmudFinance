@@ -1,0 +1,86 @@
+---
+import type { MarketInsight } from "@/lib/market";
+
+interface Props {
+  insight: MarketInsight;
+}
+
+const { insight } = Astro.props;
+---
+
+<section class="insight-card" aria-labelledby="market-insight-title">
+  <div class="insight-header">
+    <div>
+      <h2 id="market-insight-title">AIによる分析</h2>
+      <p class="muted">ルールベース版の市況メモ</p>
+    </div>
+    <span class="mood">{insight.mood}</span>
+  </div>
+
+  <p class="headline">{insight.headline}</p>
+
+  <ul>
+    {insight.points.map((point) => <li>{point}</li>)}
+  </ul>
+
+  <p class="focus">{insight.focus}</p>
+  <p class="disclaimer">{insight.disclaimer}</p>
+</section>
+
+<style>
+  .insight-card {
+    background: var(--bg-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .insight-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .insight-header h2 {
+    margin-bottom: 0;
+  }
+
+  .mood {
+    flex-shrink: 0;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+  }
+
+  .headline {
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+
+  ul {
+    margin: 0 0 12px;
+    padding-left: 1.1rem;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  .focus {
+    margin: 0 0 8px;
+  }
+
+  .disclaimer {
+    border-top: 1px solid var(--ink-light);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    margin: 12px 0 0;
+    padding-top: 10px;
+  }
+</style>

@@ -2,15 +2,27 @@
 import Layout from "@/layouts/Layout.astro";
 import TeachingCard from "@/components/TeachingCard.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
+import MarketInsightCard from "@/components/MarketInsightCard.astro";
 import { loadTeachings, getTodaysTeaching } from "@/lib/teachings";
-import { fetchAll } from "@/lib/market";
+import { buildMarketInsight, fetchAll } from "@/lib/market";
 
 const collection = await loadTeachings();
 const teaching = getTodaysTeaching(collection.teachings);
 
-// ホームには主要4指標だけ表示
 const allQuotes = await fetchAll();
-const summarySymbols = ["^N225", "^GSPC", "JPY=X", "BTC-USD"];
+const insight = buildMarketInsight(allQuotes);
+const summarySymbols = [
+  "^N225",
+  "1306.T",
+  "^GSPC",
+  "^IXIC",
+  "JPY=X",
+  "^TNX",
+  "^VIX",
+  "GC=F",
+  "CL=F",
+  "BTC-USD",
+];
 const summary = summarySymbols
   .map((s) => allQuotes.find((q) => q.symbol === s))
   .filter((q): q is NonNullable<typeof q> => q !== undefined);
@@ -24,6 +36,8 @@ const summary = summarySymbols
 
   <TeachingCard teaching={teaching} featured showDate />
 
+  <MarketInsightCard insight={insight} />
+
   <h2>主要指標サマリー</h2>
   <div class="card">
     {summary.length === 0 ? (
@@ -32,7 +46,6 @@ const summary = summarySymbols
       summary.map((q) => <QuoteRow quote={q} />)
     )}
   </div>
-
 </Layout>
 
 <style>
