@@ -28,10 +28,11 @@ const summary = summarySymbols
   .filter((q): q is NonNullable<typeof q> => q !== undefined);
 ---
 
-<Layout title="今日 - タルムードに学ぶ" currentTab="today">
-  <header>
-    <h1>タルムードに学ぶ</h1>
-    <p class="muted">賢者の金融市場</p>
+<Layout title="賢者の金融市場 - タルムードに学ぶ" currentTab="today">
+  <header class="brand-header">
+    <p class="brand-kicker">タルムードに学ぶ</p>
+    <h1>賢者の金融市場</h1>
+    <p class="brand-subtitle">古代の知恵と今日の市場データを、毎朝1画面で。</p>
   </header>
 
   <TeachingCard teaching={teaching} featured showDate />
@@ -49,7 +50,25 @@ const summary = summarySymbols
 </Layout>
 
 <style>
-  header {
-    margin-bottom: 16px;
+  .brand-header {
+    margin-bottom: 18px;
+  }
+
+  .brand-kicker {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+
+  .brand-header h1 {
+    font-size: 2rem;
+    letter-spacing: 0;
+    margin-bottom: 4px;
+  }
+
+  .brand-subtitle {
+    color: var(--text);
+    margin: 0;
   }
 </style>

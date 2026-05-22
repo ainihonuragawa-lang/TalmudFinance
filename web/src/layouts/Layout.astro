@@ -6,7 +6,7 @@ interface Props {
   currentTab?: "today" | "market" | "teachings";
 }
 
-const { title = "タルムードに学ぶ", currentTab = "today" } = Astro.props;
+const { title = "賢者の金融市場", currentTab = "today" } = Astro.props;
 
 // ローカル: "/" / GitHub Pages: "/TalmudFinance/"
 const rawBase = import.meta.env.BASE_URL || "/";
@@ -19,7 +19,7 @@ const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#22201C" />
-    <meta name="description" content="古代ユダヤの知恵×現代の市場データ。毎日1つのタルムードの教えと、19の主要指標を1画面で。" />
+    <meta name="description" content="古代ユダヤの知恵と現代の市場データを、毎日1つの教えと主要市場指標で読み解く。" />
     <title>{title}</title>
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
   </head>
