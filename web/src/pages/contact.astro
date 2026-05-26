@@ -1,0 +1,41 @@
+﻿---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="お問い合わせ - 賢者の金融市場">
+  <article class="policy-page">
+    <h1>お問い合わせ</h1>
+    <p>
+      本サイトへのご質問、ご意見、表示不具合の報告は、以下のメールアドレスまでお送りください。
+    </p>
+
+    <div class="contact-box">
+      <div class="label">連絡先</div>
+      <a href="mailto:ai.nihon.uragawa@gmail.com">ai.nihon.uragawa@gmail.com</a>
+    </div>
+
+    <h2>お願い</h2>
+    <p>
+      市場データの表示不具合をご連絡いただく場合は、閲覧日時、ページURL、表示されていた銘柄名を添えていただけると確認しやすくなります。
+    </p>
+    <p>
+      個別の投資判断、売買タイミング、特定銘柄の推奨に関するご相談には対応できません。
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .contact-box {
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    margin: 16px 0;
+    padding: 14px;
+  }
+
+  .label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+</style>

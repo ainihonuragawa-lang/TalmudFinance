@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import TeachingCard from "@/components/TeachingCard.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
+import AdPlaceholder from "@/components/AdPlaceholder.astro";
 import { loadTeachings, getTodaysTeaching } from "@/lib/teachings";
 import { buildMarketInsight, fetchAll } from "@/lib/market";
 
@@ -47,6 +48,8 @@ const summary = summarySymbols
       summary.map((q) => <QuoteRow quote={q} />)
     )}
   </div>
+
+  <AdPlaceholder label="広告スペース（準備中）" />
 </Layout>
 
 <style>

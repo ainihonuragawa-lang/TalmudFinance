@@ -65,7 +65,7 @@ main {
   max-width: 720px;
   margin: 0 auto;
   padding: 16px;
-  padding-bottom: 80px; /* 下部ナビ分の余白 */
+  padding-bottom: 24px;
 }
 
 a {
@@ -141,4 +141,49 @@ h3 { font-size: 1.1rem; }
 .card.featured .source,
 .card.featured strong {
   color: var(--ink-dark);
+}
+.policy-page {
+  max-width: 720px;
+}
+
+.policy-page p,
+.policy-page li {
+  line-height: 1.8;
+}
+
+.policy-page ul {
+  padding-left: 1.2rem;
+}
+
+.site-footer {
+  border-top: 1px solid color-mix(in srgb, var(--ink-light) 65%, transparent);
+  color: var(--text-muted);
+  max-width: 720px;
+  margin: 8px auto 72px;
+  padding: 18px 16px 0;
+}
+
+.footer-brand {
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 8px;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.site-footer p {
+  font-size: 0.78rem;
+  margin: 0;
 }

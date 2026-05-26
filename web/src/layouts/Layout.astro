@@ -6,7 +6,7 @@ interface Props {
   currentTab?: "today" | "market" | "teachings";
 }
 
-const { title = "賢者の金融市場", currentTab = "today" } = Astro.props;
+const { title = "賢者の金融市場", currentTab } = Astro.props;
 
 // ローカル: "/" / GitHub Pages: "/TalmudFinance/"
 const rawBase = import.meta.env.BASE_URL || "/";
@@ -19,7 +19,7 @@ const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#22201C" />
-    <meta name="description" content="古代ユダヤの知恵と現代の市場データを、毎日1つの教えと主要市場指標で読み解く。" />
+    <meta name="description" content="古代ユダヤの知恵と現代の市場データを、毎日1つの教えと主要市場指標で読み解く。学習・情報提供を目的とした金融市場サイトです。" />
     <title>{title}</title>
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
   </head>
@@ -27,6 +27,16 @@ const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
     <main>
       <slot />
     </main>
+    <footer class="site-footer">
+      <div class="footer-brand">賢者の金融市場</div>
+      <nav aria-label="サイト情報">
+        <a href={`${base}about/`}>このサイトについて</a>
+        <a href={`${base}disclaimer/`}>免責事項</a>
+        <a href={`${base}privacy/`}>プライバシーポリシー</a>
+        <a href={`${base}contact/`}>お問い合わせ</a>
+      </nav>
+      <p>学習・情報提供を目的としたサイトです。投資助言ではありません。</p>
+    </footer>
     <nav class="tab-nav">
       <a href={base} class={currentTab === "today" ? "active" : ""}>今日</a>
       <a href={`${base}market/`} class={currentTab === "market" ? "active" : ""}>マーケット</a>
