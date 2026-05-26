@@ -49,8 +49,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
-          ASTRO_SITE: https://${{ github.repository_owner }}.github.io
-          ASTRO_BASE: /${{ github.event.repository.name }}
+          ASTRO_SITE: https://talmudfinance.com
+          ASTRO_BASE: /
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
