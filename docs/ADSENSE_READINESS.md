@@ -34,10 +34,14 @@ AdSense申請を本気で進めるなら、独自ドメインの取得を推奨�
 - `kenja-market.jp`
 - `sage-market.jp`
 
+## AdSense ID
+
+- `ca-pub-2482284777670231`
+
 ## AdSense申請前チェック
 
 - [x] 独自ドメインを取得するか最終判断
-- [ ] AdSense審査用コードまたはメタタグを`Layout.astro`へ追加
+- [x] AdSense審査用コードまたはメタタグを`Layout.astro`へ追加
 - [ ] AdSenseのサイト審査を申請
 - [ ] 審査通過後、広告仮枠を実広告コードへ差し替え
-- [ ] `ads.txt`を必要に応じて`web/public/ads.txt`へ追加
+- [x] `ads.txt`を必要に応じて`web/public/ads.txt`へ追加
