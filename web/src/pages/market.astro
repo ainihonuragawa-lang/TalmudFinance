@@ -2,7 +2,6 @@
 import Layout from "@/layouts/Layout.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
-import AdPlaceholder from "@/components/AdPlaceholder.astro";
 import { buildMarketInsight, fetchAll, type MarketCategory } from "@/lib/market";
 
 const allQuotes = await fetchAll();
@@ -59,9 +58,6 @@ const lastUpdated = now.toLocaleString("ja-JP", {
       </div>
     </section>
   ))}
-
-
-  <AdPlaceholder label="広告スペース（準備中）" />
 </Layout>
 
 <style>
