@@ -1,0 +1,40 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { guideArticles, type GuideArticle } from "@/data/guides";
+
+export function getStaticPaths() {
+  return guideArticles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props as { article: GuideArticle };
+---
+
+<Layout title={`${article.title} - 賢者の金融市場`}>
+  <article class="policy-page guide-article">
+    <p class="brand-kicker">市場を読むための学び</p>
+    <h1>{article.title}</h1>
+    <p class="muted">{article.readingTime}</p>
+    <p>{article.description}</p>
+
+    {article.sections.map((section) => (
+      <section class="article-section">
+        <h2>{section.heading}</h2>
+        {section.body.map((paragraph) => <p>{paragraph}</p>)}
+      </section>
+    ))}
+
+    <aside class="article-note">
+      <h2>このページの位置づけ</h2>
+      <p>
+        本記事は市場を観察するための一般的な学習コンテンツです。特定の金融商品の売買、
+        保有、解約を勧めるものではありません。実際の判断は、ご自身の目的、資産状況、
+        リスク許容度を確認したうえで行ってください。
+      </p>
+    </aside>
+
+    <p class="back-link"><a href="/guides/">市場の読み方一覧へ戻る</a></p>
+  </article>
+</Layout>

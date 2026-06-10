@@ -87,6 +87,13 @@ h1 { font-size: 1.75rem; }
 h2 { font-size: 1.35rem; }
 h3 { font-size: 1.1rem; }
 
+.brand-kicker {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
 .muted {
   color: var(--text-muted);
   font-size: 0.85em;
@@ -142,6 +149,53 @@ h3 { font-size: 1.1rem; }
 .card.featured strong {
   color: var(--ink-dark);
 }
+
+.guide-grid {
+  display: grid;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.guide-grid.compact {
+  margin: 12px 0 0;
+}
+
+.guide-card {
+  background: var(--bg-elevated);
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+  border-radius: 8px;
+  color: var(--text);
+  display: block;
+  padding: 14px;
+}
+
+.guide-card:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.guide-card span {
+  color: var(--text-muted);
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.guide-card h2,
+.guide-card h3 {
+  color: var(--accent);
+  font-size: 1.05rem;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.guide-card p {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  margin: 0;
+}
+
 .policy-page {
   max-width: 720px;
 }
@@ -153,6 +207,32 @@ h3 { font-size: 1.1rem; }
 
 .policy-page ul {
   padding-left: 1.2rem;
+}
+
+.article-section {
+  border-top: 1px solid color-mix(in srgb, var(--ink-light) 50%, transparent);
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.article-section h2 {
+  font-size: 1.2rem;
+}
+
+.article-note {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, transparent);
+  border-radius: 8px;
+  margin-top: 24px;
+  padding: 14px;
+}
+
+.article-note h2 {
+  font-size: 1.1rem;
+}
+
+.back-link {
+  margin-top: 18px;
 }
 
 .site-footer {

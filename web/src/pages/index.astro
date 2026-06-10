@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout.astro";
 import TeachingCard from "@/components/TeachingCard.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
+import { guides } from "@/data/guides";
 import { loadTeachings, getTodaysTeaching } from "@/lib/teachings";
 import { buildMarketInsight, fetchAll } from "@/lib/market";
 
@@ -39,6 +40,27 @@ const summary = summarySymbols
 
   <MarketInsightCard insight={insight} />
 
+  <section class="learning-section">
+    <div>
+      <p class="section-kicker">市場を読むための学び</p>
+      <h2>数字の背景を落ち着いて読む</h2>
+      <p>
+        毎日の値動きを売買サインとして急いで受け取るのではなく、株価、為替、金利、
+        リスク指標を組み合わせて観察するための記事を用意しています。
+      </p>
+    </div>
+    <div class="guide-grid compact">
+      {guides.slice(0, 3).map((guide) => (
+        <a class="guide-card" href={`/guides/${guide.slug}/`}>
+          <span>{guide.readingTime}</span>
+          <h3>{guide.title}</h3>
+          <p>{guide.description}</p>
+        </a>
+      ))}
+    </div>
+    <p class="guide-more"><a href="/guides/">すべての記事を見る</a></p>
+  </section>
+
   <h2>主要指標サマリー</h2>
   <div class="card">
     {summary.length === 0 ? (
@@ -70,5 +92,25 @@ const summary = summarySymbols
   .brand-subtitle {
     color: var(--text);
     margin: 0;
+  }
+
+  .learning-section {
+    margin: 22px 0 24px;
+  }
+
+  .section-kicker {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+
+  .learning-section > div:first-child p:last-child {
+    margin-top: 0;
+  }
+
+  .guide-more {
+    margin: 8px 0 0;
+    text-align: right;
   }
 </style>

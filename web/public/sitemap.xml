@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://talmudfinance.com/</loc>
-    <lastmod>2026-05-28</lastmod>
+    <lastmod>2026-06-11</lastmod>
   </url>
   <url>
     <loc>https://talmudfinance.com/market/</loc>
@@ -14,7 +14,27 @@
   </url>
   <url>
     <loc>https://talmudfinance.com/about/</loc>
-    <lastmod>2026-05-28</lastmod>
+    <lastmod>2026-06-11</lastmod>
+  </url>
+  <url>
+    <loc>https://talmudfinance.com/guides/</loc>
+    <lastmod>2026-06-11</lastmod>
+  </url>
+  <url>
+    <loc>https://talmudfinance.com/guides/market-reading/</loc>
+    <lastmod>2026-06-11</lastmod>
+  </url>
+  <url>
+    <loc>https://talmudfinance.com/guides/interest-rate-fx/</loc>
+    <lastmod>2026-06-11</lastmod>
+  </url>
+  <url>
+    <loc>https://talmudfinance.com/guides/risk-management/</loc>
+    <lastmod>2026-06-11</lastmod>
+  </url>
+  <url>
+    <loc>https://talmudfinance.com/guides/talmud-and-market/</loc>
+    <lastmod>2026-06-11</lastmod>
   </url>
   <url>
     <loc>https://talmudfinance.com/disclaimer/</loc>

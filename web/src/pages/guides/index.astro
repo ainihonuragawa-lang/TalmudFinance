@@ -1,0 +1,25 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { guides } from "@/data/guides";
+---
+
+<Layout title="市場の読み方 - 賢者の金融市場">
+  <article class="policy-page">
+    <p class="brand-kicker">市場を読むための学び</p>
+    <h1>市場の読み方</h1>
+    <p>
+      日々の市場データを、短期的な売買判断ではなく、観察と学習の材料として読むための記事です。
+      株価、為替、金利、リスク指標を組み合わせて見ることで、数字の背後にある市場心理を落ち着いて考えます。
+    </p>
+
+    <div class="guide-grid">
+      {guides.map((guide) => (
+        <a class="guide-card" href={`/guides/${guide.slug}/`}>
+          <span>{guide.readingTime}</span>
+          <h2>{guide.title}</h2>
+          <p>{guide.description}</p>
+        </a>
+      ))}
+    </div>
+  </article>
+</Layout>
