@@ -23,7 +23,12 @@ const priceFmt = quote.symbol.endsWith("=X")
     <div class="symbol">{quote.symbol}</div>
   </div>
   <div class="right">
-    <div class="price">{priceFmt}</div>
+    <div class="price">
+      {priceFmt}
+      {quote.stale && (
+        <span class="stale-tag" title="今回の取得に失敗したため前回取得値を表示しています">前回値</span>
+      )}
+    </div>
     <div class={`change ${direction}`}>
       {sign}{change.toFixed(2)} ({sign}{percent.toFixed(2)}%)
     </div>
@@ -62,6 +67,17 @@ const priceFmt = quote.symbol.endsWith("=X")
   }
   .price {
     font-weight: 500;
+  }
+  .stale-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border: 1px solid var(--text-muted);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 0.66rem;
+    font-weight: 600;
+    vertical-align: middle;
   }
   .change {
     font-size: 0.85rem;

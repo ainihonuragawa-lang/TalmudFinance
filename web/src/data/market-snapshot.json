@@ -1,0 +1,467 @@
+{
+  "updatedAt": "2026-06-30T23:44:47.667Z",
+  "quotes": {
+    "^N225": {
+      "price": 70062.32,
+      "previousClose": 69174.97,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "1306.T": {
+      "price": 423.6,
+      "previousClose": 419.9,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "7203.T": {
+      "price": 2725,
+      "previousClose": 2686,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "6758.T": {
+      "price": 3280,
+      "previousClose": 3250,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "9984.T": {
+      "price": 5963,
+      "previousClose": 6597,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "8306.T": {
+      "price": 3207,
+      "previousClose": 3205,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "8316.T": {
+      "price": 6346,
+      "previousClose": 6356,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "9432.T": {
+      "price": 145,
+      "previousClose": 145.1,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "9433.T": {
+      "price": 2745,
+      "previousClose": 2679.5,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "9434.T": {
+      "price": 208.1,
+      "previousClose": 205.3,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "6861.T": {
+      "price": 81060,
+      "previousClose": 76750,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "9983.T": {
+      "price": 82810,
+      "previousClose": 81540,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "7974.T": {
+      "price": 6815,
+      "previousClose": 6858,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "8035.T": {
+      "price": 77150,
+      "previousClose": 69900,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "6501.T": {
+      "price": 4471,
+      "previousClose": 4691,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "8058.T": {
+      "price": 4347,
+      "previousClose": 4530,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "4502.T": {
+      "price": 5155,
+      "previousClose": 5104,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "6098.T": {
+      "price": 11330,
+      "previousClose": 11225,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "4063.T": {
+      "price": 7008,
+      "previousClose": 7100,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "4568.T": {
+      "price": 2608.5,
+      "previousClose": 2526.5,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^DJI": {
+      "price": 52319.2,
+      "previousClose": 51666.84,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^GSPC": {
+      "price": 7499.36,
+      "previousClose": 7365.46,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^IXIC": {
+      "price": 26213.719,
+      "previousClose": 25587.04,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^RUT": {
+      "price": 3024.367,
+      "previousClose": 2975.48,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "AAPL": {
+      "price": 289.36,
+      "previousClose": 294.3,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "MSFT": {
+      "price": 373.02,
+      "previousClose": 373.94,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "NVDA": {
+      "price": 200.09,
+      "previousClose": 200.04,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "AMZN": {
+      "price": 238.34,
+      "previousClose": 234.11,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "GOOGL": {
+      "price": 357.37,
+      "previousClose": 346.13,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "META": {
+      "price": 563.29,
+      "previousClose": 562.2,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "TSLA": {
+      "price": 420.6,
+      "previousClose": 381.61,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "BRK-B": {
+      "price": 500.39,
+      "previousClose": 492.81,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "JPM": {
+      "price": 327.33,
+      "previousClose": 334.14,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "V": {
+      "price": 343.09,
+      "previousClose": 328.48,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "MA": {
+      "price": 513.6,
+      "previousClose": 488.07,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "LLY": {
+      "price": 1199.43,
+      "previousClose": 1107.08,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "AVGO": {
+      "price": 377.75,
+      "previousClose": 380.15,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "XOM": {
+      "price": 136.72,
+      "previousClose": 139.73,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "COST": {
+      "price": 935.47,
+      "previousClose": 957.68,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "SPY": {
+      "price": 746.77,
+      "previousClose": 733.58,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "QQQ": {
+      "price": 736.4,
+      "previousClose": 713.65,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "VTI": {
+      "price": 370.04,
+      "previousClose": 363.7,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "IWM": {
+      "price": 300.45,
+      "previousClose": 295.32,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "DIA": {
+      "price": 522.39,
+      "previousClose": 516.62,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "EWJ": {
+      "price": 93.27,
+      "previousClose": 92.75,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "EFA": {
+      "price": 103.88,
+      "previousClose": 102.46,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "EEM": {
+      "price": 68.41,
+      "previousClose": 67.17,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "GLD": {
+      "price": 368.38,
+      "previousClose": 377.32,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "TLT": {
+      "price": 86.42,
+      "previousClose": 86.2,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "HYG": {
+      "price": 79.97,
+      "previousClose": 79.87,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "JPY=X": {
+      "price": 162.577,
+      "previousClose": 161.763,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "EURJPY=X": {
+      "price": 185.585,
+      "previousClose": 183.67,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "EURUSD=X": {
+      "price": 1.1419,
+      "previousClose": 1.1354,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "GBPJPY=X": {
+      "price": 215.461,
+      "previousClose": 212.948,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "AUDJPY=X": {
+      "price": 112.411,
+      "previousClose": 111.592,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "CHFJPY=X": {
+      "price": 201.076,
+      "previousClose": 199.033,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "CADJPY=X": {
+      "price": 114.494,
+      "previousClose": 113.638,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "NZDJPY=X": {
+      "price": 92.258,
+      "previousClose": 91.285,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "CNYJPY=X": {
+      "price": 23.914,
+      "previousClose": 23.8213,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "GBPUSD=X": {
+      "price": 1.3255,
+      "previousClose": 1.3167,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "BTC-USD": {
+      "price": 58491.02,
+      "previousClose": 60016.43,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "ETH-USD": {
+      "price": 1567.89,
+      "previousClose": 1576.6161,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "SOL-USD": {
+      "price": 73.45,
+      "previousClose": 71.83538,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "XRP-USD": {
+      "price": 1.0379,
+      "previousClose": 1.047119,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "BNB-USD": {
+      "price": 544.72,
+      "previousClose": 566.858,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "ADA-USD": {
+      "price": 0.1441,
+      "previousClose": 0.148206,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "DOGE-USD": {
+      "price": 0.07184,
+      "previousClose": 0.075662,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "BTC-JPY": {
+      "price": 9510710,
+      "previousClose": 9705802,
+      "currency": "JPY",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "GC=F": {
+      "price": 4024.8,
+      "previousClose": 4030.5,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "SI=F": {
+      "price": 59.05,
+      "previousClose": 58.348,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "CL=F": {
+      "price": 70.05,
+      "previousClose": 71.92,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "NG=F": {
+      "price": 3.256,
+      "previousClose": 3.343,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "HG=F": {
+      "price": 6.251,
+      "previousClose": 6.07,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^TNX": {
+      "price": 4.418,
+      "previousClose": 4.402,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^VIX": {
+      "price": 16.45,
+      "previousClose": 18.63,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "DX-Y.NYB": {
+      "price": 101.172,
+      "previousClose": 101.43,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    },
+    "^IRX": {
+      "price": 3.7319999,
+      "previousClose": 3.69,
+      "currency": "USD",
+      "asOf": "2026-06-30T23:44:47.667Z"
+    }
+  }
+}

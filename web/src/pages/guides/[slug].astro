@@ -10,13 +10,22 @@ export function getStaticPaths() {
 }
 
 const { article } = Astro.props as { article: GuideArticle };
+
+// 関連記事: 同カテゴリを優先し、足りなければ他カテゴリで補完して最大3件
+const sameCategory = guideArticles.filter(
+  (a) => a.slug !== article.slug && a.category === article.category,
+);
+const others = guideArticles.filter(
+  (a) => a.slug !== article.slug && a.category !== article.category,
+);
+const related = [...sameCategory, ...others].slice(0, 3);
 ---
 
 <Layout title={`${article.title} - 賢者の金融市場`}>
   <article class="policy-page guide-article">
-    <p class="brand-kicker">市場を読むための学び</p>
+    <p class="brand-kicker">市場を読むための学び・{article.category}</p>
     <h1>{article.title}</h1>
-    <p class="muted">{article.readingTime}</p>
+    <p class="muted">読了目安 {article.readingTime}　/　最終更新 {article.updated}　/　編集: 賢者の金融市場 編集部</p>
     <p>{article.description}</p>
 
     {article.sections.map((section) => (
@@ -35,6 +44,41 @@ const { article } = Astro.props as { article: GuideArticle };
       </p>
     </aside>
 
+    <section class="related">
+      <h2>あわせて読みたい</h2>
+      <ul>
+        {related.map((r) => (
+          <li>
+            <a href={`/guides/${r.slug}/`}>{r.title}</a>
+            <span class="muted">（{r.readingTime}）</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
     <p class="back-link"><a href="/guides/">市場の読み方一覧へ戻る</a></p>
   </article>
 </Layout>
+
+<style>
+  .related {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    margin-top: 28px;
+    padding-top: 16px;
+  }
+
+  .related h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .related ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .related li {
+    margin-bottom: 8px;
+  }
+</style>

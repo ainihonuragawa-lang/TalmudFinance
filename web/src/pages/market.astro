@@ -2,10 +2,20 @@
 import Layout from "@/layouts/Layout.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
-import { buildMarketInsight, fetchAll, type MarketCategory } from "@/lib/market";
+import { buildMarketInsight, fetchAll, getDataFreshness, type MarketCategory } from "@/lib/market";
 
 const allQuotes = await fetchAll();
 const insight = buildMarketInsight(allQuotes);
+const freshness = getDataFreshness(allQuotes);
+const staleDateLabel = freshness.oldestAsOf
+  ? new Date(freshness.oldestAsOf).toLocaleString("ja-JP", {
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Tokyo",
+    })
+  : null;
 
 const categories: { key: MarketCategory; label: string; emoji: string }[] = [
   { key: "JP_STOCK", label: "日本株", emoji: "🗾" },
@@ -35,7 +45,12 @@ const lastUpdated = now.toLocaleString("ja-JP", {
 <Layout title="マーケット - 賢者の金融市場" currentTab="market">
   <header>
     <h1>マーケット</h1>
-    <p class="muted">最終更新: {lastUpdated} (JST)</p>
+    <p class="muted">ページ生成: {lastUpdated} (JST)・約30分ごとに自動更新</p>
+    {freshness.hasStale && (
+      <p class="stale-note">
+        ⚠ 一部の銘柄は今回データを取得できなかったため、前回取得値（{staleDateLabel} 時点）を「前回値」として表示しています。
+      </p>
+    )}
   </header>
 
   <nav class="anchor-nav" aria-label="マーケットカテゴリ">
@@ -63,6 +78,15 @@ const lastUpdated = now.toLocaleString("ja-JP", {
 <style>
   header {
     margin-bottom: 16px;
+  }
+  .stale-note {
+    background: color-mix(in srgb, var(--accent) 12%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.82rem;
+    margin: 10px 0 0;
+    padding: 8px 12px;
   }
   section {
     margin-bottom: 24px;

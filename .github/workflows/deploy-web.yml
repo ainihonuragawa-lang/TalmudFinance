@@ -45,6 +45,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 前回値スナップショットをビルド間で引き継ぐ。
+      # ビルド時に Yahoo 取得へ失敗した銘柄は、このキャッシュ内の前回値で表示され、
+      # マーケット欄が空になるのを防ぐ。run_id をキーにし restore-keys で直近を復元、
+      # 毎回更新後の値を新キーで保存する（commit 不要）。
+      - name: Restore last market snapshot
+        uses: actions/cache@v4
+        with:
+          path: web/src/data/market-snapshot.json
+          key: market-snapshot-${{ github.run_id }}
+          restore-keys: |
+            market-snapshot-
+
       - name: Build Astro site (fetches market data at build time)
         run: npm run build
         env:

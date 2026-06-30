@@ -23,6 +23,10 @@ export interface MarketQuote {
   price: number;
   previousClose: number;
   currency: string;
+  /** 今回の取得に失敗し、前回値（スナップショット）を表示している場合 true */
+  stale?: boolean;
+  /** この値が取得された時刻（ISO文字列）。前回値フォールバック時は前回取得時刻 */
+  asOf?: string;
 }
 
 export const WATCHLIST: SymbolDef[] = [
@@ -111,6 +115,48 @@ const FETCH_BATCH_SIZE = 12;
 
 let quoteCache: Promise<MarketQuote[]> | null = null;
 
+// 前回値スナップショット（ビルド時のフォールバック用）。src/data 配下に置き、Web には配信しない。
+const SNAPSHOT_RELATIVE_PATH = "src/data/market-snapshot.json";
+
+interface SnapshotEntry {
+  price: number;
+  previousClose: number;
+  currency: string;
+  asOf: string;
+}
+
+interface MarketSnapshot {
+  updatedAt: string | null;
+  quotes: Record<string, SnapshotEntry>;
+}
+
+/** 前回値スナップショットを読み込む。存在しない/壊れている場合は空を返す。 */
+async function loadSnapshot(): Promise<MarketSnapshot> {
+  try {
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+    const filePath = path.resolve(SNAPSHOT_RELATIVE_PATH);
+    const text = await fs.readFile(filePath, "utf-8");
+    const parsed = JSON.parse(text) as MarketSnapshot;
+    if (parsed && typeof parsed === "object" && parsed.quotes) return parsed;
+  } catch {
+    // 未作成・読み込み失敗時は空スナップショットで続行（ビルドは止めない）
+  }
+  return { updatedAt: null, quotes: {} };
+}
+
+/** 更新後のスナップショットを保存する。失敗してもビルドは止めない。 */
+async function saveSnapshot(snapshot: MarketSnapshot): Promise<void> {
+  try {
+    const fs = await import("node:fs/promises");
+    const path = await import("node:path");
+    const filePath = path.resolve(SNAPSHOT_RELATIVE_PATH);
+    await fs.writeFile(filePath, JSON.stringify(snapshot, null, 2) + "\n", "utf-8");
+  } catch (e) {
+    console.warn("[market] snapshot save skipped:", (e as Error).message);
+  }
+}
+
 /**
  * 単一銘柄を取得（指数バックオフでリトライ）
  * Node.js のグローバル fetch を使用（Astro ビルドは Node 18+）
@@ -173,14 +219,75 @@ export async function fetchAll(): Promise<MarketQuote[]> {
 
 async function fetchAllUncached(): Promise<MarketQuote[]> {
   console.log(`[market] Fetching ${WATCHLIST.length} symbols at build time...`);
+  const nowIso = new Date().toISOString();
   const results: (MarketQuote | null)[] = [];
   for (let i = 0; i < WATCHLIST.length; i += FETCH_BATCH_SIZE) {
     const batch = WATCHLIST.slice(i, i + FETCH_BATCH_SIZE);
     results.push(...await Promise.all(batch.map((def) => fetchQuoteWithRetry(def))));
   }
-  const valid = results.filter((q): q is MarketQuote => q !== null);
-  console.log(`[market] Got ${valid.length}/${WATCHLIST.length} quotes`);
-  return valid;
+
+  const freshBySymbol = new Map<string, MarketQuote>();
+  for (const q of results) if (q) freshBySymbol.set(q.symbol, q);
+
+  // 前回値スナップショットを読み込み、取得失敗銘柄のフォールバックに使う
+  const snapshot = await loadSnapshot();
+
+  const merged: MarketQuote[] = [];
+  for (const def of WATCHLIST) {
+    const fresh = freshBySymbol.get(def.symbol);
+    if (fresh) {
+      merged.push({ ...fresh, stale: false, asOf: nowIso });
+      // スナップショットを最新値で更新
+      snapshot.quotes[def.symbol] = {
+        price: fresh.price,
+        previousClose: fresh.previousClose,
+        currency: fresh.currency,
+        asOf: nowIso,
+      };
+      continue;
+    }
+    // 取得失敗 → 前回値があればそれを表示（空欄を出さない）
+    const prev = snapshot.quotes[def.symbol];
+    if (prev) {
+      merged.push({
+        symbol: def.symbol,
+        displayName: def.displayName,
+        category: def.category,
+        price: prev.price,
+        previousClose: prev.previousClose,
+        currency: prev.currency,
+        stale: true,
+        asOf: prev.asOf,
+      });
+    }
+    // 前回値も無ければスキップ（初回かつ取得失敗の銘柄のみ）
+  }
+
+  const freshCount = merged.filter((q) => !q.stale).length;
+  const staleCount = merged.length - freshCount;
+  console.log(
+    `[market] ${freshCount} fresh, ${staleCount} from snapshot, ${merged.length}/${WATCHLIST.length} total`,
+  );
+
+  // 更新したスナップショットを保存（次回ビルドのフォールバック用）
+  snapshot.updatedAt = nowIso;
+  await saveSnapshot(snapshot);
+
+  return merged;
+}
+
+/** 表示中のデータに前回値フォールバックが含まれるか、最も古い asOf を返す。 */
+export function getDataFreshness(quotes: MarketQuote[]): {
+  hasStale: boolean;
+  oldestAsOf: string | null;
+} {
+  let hasStale = false;
+  let oldest: string | null = null;
+  for (const q of quotes) {
+    if (q.stale) hasStale = true;
+    if (q.asOf && (oldest === null || q.asOf < oldest)) oldest = q.asOf;
+  }
+  return { hasStale, oldestAsOf: oldest };
 }
 
 /** カテゴリで絞り込み */
