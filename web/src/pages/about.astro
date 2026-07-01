@@ -14,6 +14,30 @@ import Layout from "@/layouts/Layout.astro";
       その日のタルムード由来の教えを1つ表示します。
     </p>
 
+    <h2>運営者について</h2>
+    <div class="author-card">
+      <p class="author-name">運営者：AI日本の裏側</p>
+      <p>
+        個人でコンテンツ制作とWeb開発を行っています。YouTubeチャンネル
+        <a href="https://www.youtube.com/@AI%E6%97%A5%E6%9C%AC%E3%81%AE%E8%A3%8F%E5%81%B4" target="_blank" rel="noopener noreferrer">「AI日本の裏側」</a>
+        を運営するかたわら、<a href="https://ainihonuragawa.com/" target="_blank" rel="noopener noreferrer">ainihonuragawa.com</a>
+        やこの「賢者の金融市場」（talmudfinance.com）といったWebアプリ・サイトを、企画から制作・運営まで一人で手がけています。
+      </p>
+      <p>
+        金融の資格を持つ専門アドバイザーではなく、一人の個人投資家であり開発者です。
+        自分自身が相場を学ぶ過程で整理してきた「落ち着いて市場を眺めるための見方や手順」を、
+        同じように学びたい方へ向けて言葉にしています。だからこそ本サイトでは、特定銘柄の推奨や
+        断定的な予想は行わず、投資助言ではなく学習・情報提供に徹する方針をとっています。
+      </p>
+      <p class="author-links">
+        <a href="https://www.youtube.com/@AI%E6%97%A5%E6%9C%AC%E3%81%AE%E8%A3%8F%E5%81%B4" target="_blank" rel="noopener noreferrer">YouTube「AI日本の裏側」</a>
+        <span aria-hidden="true">／</span>
+        <a href="https://ainihonuragawa.com/" target="_blank" rel="noopener noreferrer">ainihonuragawa.com</a>
+        <span aria-hidden="true">／</span>
+        <a href="mailto:ai.nihon.uragawa@gmail.com">お問い合わせ</a>
+      </p>
+    </div>
+
     <h2>目的</h2>
     <p>
       本サイトの目的は、短期的な売買判断を促すことではなく、
@@ -60,3 +84,25 @@ import Layout from "@/layouts/Layout.astro";
     </p>
   </article>
 </Layout>
+
+<style>
+  .author-card {
+    background: var(--bg-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px 0 4px;
+  }
+  .author-name {
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .author-links {
+    font-size: 0.9rem;
+    margin-top: 12px;
+  }
+  .author-links span {
+    color: var(--text-muted);
+    margin: 0 4px;
+  }
+</style>

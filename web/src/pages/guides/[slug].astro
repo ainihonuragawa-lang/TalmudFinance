@@ -25,7 +25,7 @@ const related = [...sameCategory, ...others].slice(0, 3);
   <article class="policy-page guide-article">
     <p class="brand-kicker">市場を読むための学び・{article.category}</p>
     <h1>{article.title}</h1>
-    <p class="muted">読了目安 {article.readingTime}　/　最終更新 {article.updated}　/　編集: 賢者の金融市場 編集部</p>
+    <p class="muted">読了目安 {article.readingTime}　/　最終更新 {article.updated}　/　文・編集: <a href="/about/">AI日本の裏側</a></p>
     <p>{article.description}</p>
 
     {article.sections.map((section) => (
