@@ -3,14 +3,23 @@ import "../styles/global.css";
 
 interface Props {
   title?: string;
+  description?: string;
   currentTab?: "today" | "market" | "teachings";
 }
 
-const { title = "賢者の金融市場", currentTab } = Astro.props;
+const {
+  title = "賢者の金融市場",
+  description =
+    "古代ユダヤ・タルムードの知恵と、日本株・米国株・為替・金利などの市場データを毎日1画面で。落ち着いて相場を学ぶための学習サイトです。",
+  currentTab,
+} = Astro.props;
 
 // ローカル: "/" / GitHub Pages: "/TalmudFinance/"
 const rawBase = import.meta.env.BASE_URL || "/";
 const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
+
+// 自己参照 canonical（実際の配信URLに一致させる）
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
 ---
 
 <!doctype html>
@@ -19,9 +28,16 @@ const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#22201C" />
-    <meta name="description" content="古代ユダヤの知恵と現代の市場データを、毎日1つの教えと主要市場指標で読み解く。学習・情報提供を目的とした金融市場サイトです。" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="賢者の金融市場" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5692505287904140" crossorigin="anonymous"></script>
   </head>
   <body>

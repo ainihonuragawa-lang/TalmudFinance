@@ -42,7 +42,11 @@ const lastUpdated = now.toLocaleString("ja-JP", {
 });
 ---
 
-<Layout title="マーケット - 賢者の金融市場" currentTab="market">
+<Layout
+  title="マーケット - 賢者の金融市場"
+  description="日本株・米国株・ETF・為替・暗号資産・商品・金利の主要指標を一覧。取得失敗時は前回値で補完し、約30分ごとに自動更新します。"
+  currentTab="market"
+>
   <header>
     <h1>マーケット</h1>
     <p class="muted">ページ生成: {lastUpdated} (JST)・約30分ごとに自動更新</p>

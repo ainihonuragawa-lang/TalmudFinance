@@ -21,7 +21,7 @@ const others = guideArticles.filter(
 const related = [...sameCategory, ...others].slice(0, 3);
 ---
 
-<Layout title={`${article.title} - 賢者の金融市場`}>
+<Layout title={`${article.title} - 賢者の金融市場`} description={article.description}>
   <article class="policy-page guide-article">
     <p class="brand-kicker">市場を読むための学び・{article.category}</p>
     <h1>{article.title}</h1>

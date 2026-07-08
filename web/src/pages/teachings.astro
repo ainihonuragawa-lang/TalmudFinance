@@ -7,7 +7,11 @@ const collection = await loadTeachings();
 const teachings = collection.teachings;
 ---
 
-<Layout title="教え一覧 - 賢者の金融市場" currentTab="teachings">
+<Layout
+  title="教え一覧 - 賢者の金融市場"
+  description="タルムードなどユダヤ古典に由来する100の教えと、その金融・投資的な解釈を一覧で。足るを知る、分散、学び続ける姿勢など。"
+  currentTab="teachings"
+>
   <header>
     <h1>タルムードの教え</h1>
     <p class="muted">{teachings.length}件の教え</p>
