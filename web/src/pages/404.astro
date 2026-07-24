@@ -1,0 +1,92 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout
+  title="ページが見つかりません - 賢者の金融市場"
+  description="お探しのページは見つかりませんでした。トップページ、市場の読み方（記事一覧）、タルムードの教え一覧からお探しください。"
+>
+  <article class="policy-page not-found">
+    <p class="brand-kicker">404 - Not Found</p>
+    <h1>ページが見つかりませんでした</h1>
+    <p>
+      お探しのページは、移動または削除されたか、URLが正しくない可能性があります。
+      お手数ですが、以下のいずれかからお探しください。
+    </p>
+
+    <div class="nf-links">
+      <a class="nf-card" href="/">
+        <span class="nf-emoji" aria-hidden="true">🏠</span>
+        <span class="nf-title">トップページ</span>
+        <span class="nf-desc">今日の教えと主要指標のまとめ</span>
+      </a>
+      <a class="nf-card" href="/guides/">
+        <span class="nf-emoji" aria-hidden="true">📖</span>
+        <span class="nf-title">市場の読み方（記事）</span>
+        <span class="nf-desc">指数・為替・金利・投資の考え方の解説</span>
+      </a>
+      <a class="nf-card" href="/market/">
+        <span class="nf-emoji" aria-hidden="true">📊</span>
+        <span class="nf-title">マーケット</span>
+        <span class="nf-desc">主要指標を一覧で確認</span>
+      </a>
+      <a class="nf-card" href="/teachings/">
+        <span class="nf-emoji" aria-hidden="true">📜</span>
+        <span class="nf-title">タルムードの教え</span>
+        <span class="nf-desc">古典に学ぶ100の教えと解釈</span>
+      </a>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .not-found h1 {
+    margin-bottom: 12px;
+  }
+
+  .nf-links {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  @media (min-width: 520px) {
+    .nf-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .nf-card {
+    background: var(--bg-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+    border-radius: 10px;
+    color: var(--text);
+    display: block;
+    padding: 16px;
+  }
+
+  .nf-card:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nf-emoji {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+
+  .nf-title {
+    color: var(--accent);
+    display: block;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .nf-desc {
+    color: var(--text-muted);
+    display: block;
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+</style>

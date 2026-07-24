@@ -4,7 +4,7 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
-  currentTab?: "today" | "market" | "teachings";
+  currentTab?: "today" | "market" | "guides" | "teachings";
 }
 
 const {
@@ -20,6 +20,29 @@ const base = rawBase.endsWith("/") ? rawBase : `${rawBase}/`;
 
 // 自己参照 canonical（実際の配信URLに一致させる）
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+
+// サイトのルートURL（本番: https://talmudfinance.com/）
+const siteRoot = (Astro.site ?? new URL("https://talmudfinance.com/")).href;
+
+// 全ページ共通の構造化データ（WebSite + Organization）
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "賢者の金融市場",
+  url: siteRoot,
+  description:
+    "古代ユダヤ・タルムードの知恵と、日本株・米国株・為替・金利などの市場データを毎日1画面で。落ち着いて相場を学ぶための学習サイトです。",
+  inLanguage: "ja",
+  publisher: { "@type": "Organization", name: "賢者の金融市場" },
+};
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "賢者の金融市場",
+  url: siteRoot,
+  founder: { "@type": "Person", name: "AI日本の裏側" },
+};
 ---
 
 <!doctype html>
@@ -38,6 +61,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizationLd)} />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5692505287904140" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -59,7 +84,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).hr
     <nav class="tab-nav">
       <a href={base} class={currentTab === "today" ? "active" : ""}>今日</a>
       <a href={`${base}market/`} class={currentTab === "market" ? "active" : ""}>マーケット</a>
-      <a href={`${base}teachings/`} class={currentTab === "teachings" ? "active" : ""}>教え一覧</a>
+      <a href={`${base}guides/`} class={currentTab === "guides" ? "active" : ""}>記事</a>
+      <a href={`${base}teachings/`} class={currentTab === "teachings" ? "active" : ""}>教え</a>
     </nav>
   </body>
 </html>

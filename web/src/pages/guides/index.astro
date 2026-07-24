@@ -14,6 +14,7 @@ const grouped = guideCategories
 <Layout
   title="市場の読み方 - 投資の基礎とタルムードの知恵 | 賢者の金融市場"
   description="日経平均・VIX・イールドカーブ・ドル円の読み方から、分散・複利・ドルコスト平均法・リスク管理、タルムード的な市場観まで。相場を落ち着いて学ぶ解説記事の一覧です。"
+  currentTab="guides"
 >
   <article class="policy-page">
     <p class="brand-kicker">市場を読むための学び</p>
@@ -31,7 +32,7 @@ const grouped = guideCategories
         <div class="guide-grid">
           {group.items.map((guide) => (
             <a class="guide-card" href={`/guides/${guide.slug}/`}>
-              <span>{guide.readingTime}・更新 {guide.updated}</span>
+              <span>{guide.readingTime}・公開 {guide.published}・最終更新 {guide.updated}</span>
               <h3>{guide.title}</h3>
               <p>{guide.description}</p>
             </a>

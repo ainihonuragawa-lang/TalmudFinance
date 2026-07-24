@@ -19,19 +19,130 @@ const others = guideArticles.filter(
   (a) => a.slug !== article.slug && a.category !== article.category,
 );
 const related = [...sameCategory, ...others].slice(0, 3);
+
+// 記事冒頭のリード（未設定なら description を代用）
+const lead = article.lead ?? article.description;
+
+// サイトのルートURL と このページの絶対URL
+const siteRoot = (Astro.site ?? new URL("https://talmudfinance.com/")).href;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const guidesUrl = new URL("guides/", siteRoot).href;
+
+// 「2026年7月24日」→「2026-07-24」（構造化データの日付用）
+function toISODate(jp: string): string | undefined {
+  const m = /(\d+)年(\d+)月(\d+)日/.exec(jp);
+  if (!m) return undefined;
+  const [, y, mo, d] = m;
+  return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+}
+
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: article.title,
+  description: article.description,
+  datePublished: toISODate(article.published),
+  dateModified: toISODate(article.updated),
+  author: { "@type": "Person", name: "AI日本の裏側" },
+  publisher: {
+    "@type": "Organization",
+    name: "賢者の金融市場",
+    url: siteRoot,
+  },
+  mainEntityOfPage: pageUrl,
+  inLanguage: "ja",
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: siteRoot },
+    { "@type": "ListItem", position: 2, name: "市場の読み方", item: guidesUrl },
+    { "@type": "ListItem", position: 3, name: article.title, item: pageUrl },
+  ],
+};
 ---
 
-<Layout title={`${article.title} - 賢者の金融市場`} description={article.description}>
+<Layout
+  title={`${article.title} - 賢者の金融市場`}
+  description={article.description}
+  currentTab="guides"
+>
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a href="/guides/">市場の読み方</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span aria-current="page">{article.title}</span>
+  </nav>
+
   <article class="policy-page guide-article">
     <p class="brand-kicker">市場を読むための学び・{article.category}</p>
     <h1>{article.title}</h1>
-    <p class="muted">読了目安 {article.readingTime}　/　最終更新 {article.updated}　/　文・編集: <a href="/about/">AI日本の裏側</a></p>
-    <p>{article.description}</p>
+    <p class="muted article-meta">
+      読了目安 {article.readingTime}　/　公開 {article.published}　/　最終更新 {article.updated}　/　文・編集: <a href="/about/">AI日本の裏側</a>
+    </p>
+    <p class="article-lead">{lead}</p>
 
-    {article.sections.map((section) => (
-      <section class="article-section">
+    <nav class="toc" aria-label="目次">
+      <p class="toc-title">目次</p>
+      <ol>
+        {article.sections.map((section, i) => (
+          <li><a href={`#sec-${i}`}>{section.heading}</a></li>
+        ))}
+      </ol>
+    </nav>
+
+    {article.sections.map((section, i) => (
+      <section class="article-section" id={`sec-${i}`}>
         <h2>{section.heading}</h2>
-        {section.body.map((paragraph) => <p>{paragraph}</p>)}
+        {section.blocks
+          ? section.blocks.map((block) =>
+              block.type === "p" ? (
+                <p>{block.text}</p>
+              ) : block.type === "table" ? (
+                <figure class="data-figure">
+                  <div class="table-scroll">
+                    <table>
+                      <thead>
+                        <tr>{block.headers.map((h) => <th>{h}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        {block.rows.map((row) => (
+                          <tr>{row.map((cell) => <td>{cell}</td>)}</tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {block.caption && <figcaption>{block.caption}</figcaption>}
+                </figure>
+              ) : block.type === "svg" ? (
+                <figure class="data-figure">
+                  <div class="svg-wrap" set:html={block.svg} />
+                  {block.caption && <figcaption>{block.caption}</figcaption>}
+                </figure>
+              ) : block.type === "faq" ? (
+                <div class="faq">
+                  {block.items.map((item) => (
+                    <details class="faq-item">
+                      <summary>{item.q}</summary>
+                      <p>{item.a}</p>
+                    </details>
+                  ))}
+                </div>
+              ) : block.type === "refs" ? (
+                <ul class="refs-list">
+                  {block.items.map((ref) => (
+                    <li>
+                      <a href={ref.url} target="_blank" rel="noopener noreferrer">{ref.label}</a>
+                      {ref.note && <span class="muted"> — {ref.note}</span>}
+                    </li>
+                  ))}
+                </ul>
+              ) : null,
+            )
+          : (section.body ?? []).map((paragraph) => <p>{paragraph}</p>)}
       </section>
     ))}
 
@@ -58,9 +169,183 @@ const related = [...sameCategory, ...others].slice(0, 3);
 
     <p class="back-link"><a href="/guides/">市場の読み方一覧へ戻る</a></p>
   </article>
+
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
 </Layout>
 
 <style>
+  .breadcrumb {
+    font-size: 0.82rem;
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .breadcrumb .sep {
+    margin: 0 6px;
+    color: var(--text-muted);
+  }
+
+  .article-meta {
+    margin-top: 0;
+  }
+
+  .article-lead {
+    font-size: 1.02rem;
+    line-height: 1.9;
+  }
+
+  /* 目次 */
+  .toc {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 20px 0 8px;
+  }
+
+  .toc-title {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.92rem;
+    margin: 0 0 8px;
+  }
+
+  .toc ol {
+    margin: 0;
+    padding-left: 1.3rem;
+  }
+
+  .toc li {
+    margin-bottom: 5px;
+    line-height: 1.6;
+  }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    text-decoration: underline;
+    color: var(--accent);
+  }
+
+  /* 図表 */
+  .data-figure {
+    margin: 20px 0;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-figure table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.9rem;
+    min-width: 320px;
+  }
+
+  .data-figure th,
+  .data-figure td {
+    border: 1px solid color-mix(in srgb, var(--ink-light) 50%, transparent);
+    padding: 8px 10px;
+    text-align: left;
+    line-height: 1.6;
+    vertical-align: top;
+  }
+
+  .data-figure thead th {
+    background: color-mix(in srgb, var(--accent) 16%, var(--bg-elevated));
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .data-figure tbody tr:nth-child(even) {
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+  }
+
+  .data-figure .svg-wrap {
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .data-figure :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .data-figure figcaption {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    line-height: 1.7;
+    margin-top: 8px;
+  }
+
+  /* FAQ */
+  .faq {
+    margin: 16px 0 4px;
+  }
+
+  .faq-item {
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 0 14px;
+    background: var(--bg-elevated);
+  }
+
+  .faq-item summary {
+    cursor: pointer;
+    font-weight: 700;
+    padding: 12px 0;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .faq-item summary:hover {
+    color: var(--accent);
+  }
+
+  .faq-item[open] summary {
+    color: var(--accent);
+  }
+
+  .faq-item p {
+    margin: 0 0 14px;
+    line-height: 1.85;
+  }
+
+  /* 参考情報 */
+  .refs-list {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+
+  .refs-list li {
+    border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    margin-bottom: 8px;
+    padding-left: 12px;
+    line-height: 1.7;
+  }
+
+  .refs-list a {
+    font-weight: 600;
+  }
+
   .related {
     border-top: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
     margin-top: 28px;

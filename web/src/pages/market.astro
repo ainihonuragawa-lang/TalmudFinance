@@ -3,6 +3,10 @@ import Layout from "@/layouts/Layout.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
 import { buildMarketInsight, fetchAll, getDataFreshness, type MarketCategory } from "@/lib/market";
+import { guides } from "@/data/guides";
+
+// 関連記事リンク用の slug → タイトル対応表
+const guideTitle = new Map(guides.map((g) => [g.slug, g.title]));
 
 const allQuotes = await fetchAll();
 const insight = buildMarketInsight(allQuotes);
@@ -17,13 +21,61 @@ const staleDateLabel = freshness.oldestAsOf
     })
   : null;
 
-const categories: { key: MarketCategory; label: string; emoji: string }[] = [
-  { key: "JP_STOCK", label: "日本株", emoji: "🗾" },
-  { key: "US_STOCK", label: "米国株", emoji: "🗽" },
-  { key: "ETF", label: "ETF", emoji: "◇" },
-  { key: "FX", label: "為替", emoji: "💴" },
-  { key: "CRYPTO", label: "暗号資産", emoji: "₿" },
-  { key: "COMMODITY_MACRO", label: "商品・マクロ", emoji: "◆" },
+const categories: {
+  key: MarketCategory;
+  label: string;
+  emoji: string;
+  guidance: string;
+  related: string[];
+}[] = [
+  {
+    key: "JP_STOCK",
+    label: "日本株",
+    emoji: "🗾",
+    guidance:
+      "日本株は国内の材料だけでなく、前日の米国市場やドル円の動きを強く受ける日があります。代表指数の日経平均とTOPIXは算出方法が異なり、同じ日でも動きがずれることがあります。指数の大きな動きが一部の値がさ株によるものか、幅広い銘柄によるものかを意識すると、相場の質が見えやすくなります。",
+    related: ["what-is-nikkei"],
+  },
+  {
+    key: "US_STOCK",
+    label: "米国株",
+    emoji: "🗽",
+    guidance:
+      "米国株は世界のリスク資産の基準になりやすく、日本株の翌日の地合いにも影響します。長い上昇・下落の波（サイクル）のなかでは、価格だけでなく参加者の心理も揺れます。転換点を当てにいくより、サイクルに耐えられる範囲のリスクで長く付き合う視点が役立ちます。",
+    related: ["market-cycles"],
+  },
+  {
+    key: "ETF",
+    label: "ETF",
+    emoji: "◇",
+    guidance:
+      "ETFは、1本で多くの銘柄や複数の国・資産に投資できる分散の道具です。ただし中身が似た商品を何本も重ねても、分散は深まりません。本数よりも、値動きの異なるものを組み合わせられているかどうかを優先して確認しましょう。",
+    related: ["diversification"],
+  },
+  {
+    key: "FX",
+    label: "為替",
+    emoji: "💴",
+    guidance:
+      "為替は二つの通貨の綱引きで決まり、円安・円高は立場によって意味が反転します。ドル円は日米の金利差やリスク回避の動きに影響されやすく、金利と一緒に見ると背景が立体的に見えてきます。「今日はどの力で動いているのか」を問う癖をつけると、ニュースの読み方が変わります。",
+    related: ["dollar-yen", "interest-rate-fx"],
+  },
+  {
+    key: "CRYPTO",
+    label: "暗号資産",
+    emoji: "₿",
+    guidance:
+      "暗号資産は値動きが大きく、リスク資産全体の雰囲気を映すことがあります。だからこそ、自分がどれだけの変動まで冷静でいられるか（リスク許容度）を、買う前に金額で言葉にしておくことが大切です。全体のなかでの位置づけを意識して眺めましょう。",
+    related: ["risk-tolerance"],
+  },
+  {
+    key: "COMMODITY_MACRO",
+    label: "商品・マクロ",
+    emoji: "◆",
+    guidance:
+      "原油や金などの商品、そしてVIXや金利といったマクロ指標は、相場の背景にある「気圧」のような存在です。VIXは市場の警戒感、金利は資産価格にかかる重力、利回り曲線は景気のメッセージを映します。単独で見るより、株価と重ねて文脈を読むのが実用的です。",
+    related: ["vix-fear-index", "yield-curve"],
+  },
 ];
 
 const grouped = categories.map((c) => ({
@@ -57,6 +109,12 @@ const lastUpdated = now.toLocaleString("ja-JP", {
     )}
   </header>
 
+  <p class="page-usage">
+    このページは、日本株・米国株・ETF・為替・暗号資産・商品やマクロ指標を一画面で見渡すためのものです。
+    数字は売買のサインではなく、相場の背景を読むための材料として並べています。各カテゴリの「見方」と
+    関連記事を手がかりに、上から順に眺めて、いつもと違う変化に気づくことを目的にしてください。
+  </p>
+
   <nav class="anchor-nav" aria-label="マーケットカテゴリ">
     {categories.map((c) => (
       <a href={`#${c.key.toLowerCase()}`}>{c.label}</a>
@@ -68,6 +126,18 @@ const lastUpdated = now.toLocaleString("ja-JP", {
   {grouped.map((g) => (
     <section id={g.key.toLowerCase()}>
       <h2>{g.emoji} {g.label}</h2>
+      <p class="cat-guidance">{g.guidance}</p>
+      {g.related.length > 0 && (
+        <p class="cat-related">
+          <span class="cat-related-label">関連記事</span>
+          {g.related.map((slug, idx) => (
+            <>
+              {idx > 0 && <span class="sep" aria-hidden="true">／</span>}
+              <a href={`/guides/${slug}/`}>{guideTitle.get(slug) ?? slug}</a>
+            </>
+          ))}
+        </p>
+      )}
       <div class="card">
         {g.quotes.length === 0 ? (
           <p class="muted">このカテゴリのデータを取得できませんでした。</p>
@@ -82,6 +152,37 @@ const lastUpdated = now.toLocaleString("ja-JP", {
 <style>
   header {
     margin-bottom: 16px;
+  }
+  .page-usage {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    line-height: 1.85;
+    margin: 0 0 16px;
+    padding: 14px 16px;
+  }
+  .cat-guidance {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    margin: 0 0 8px;
+  }
+  .cat-related {
+    font-size: 0.86rem;
+    line-height: 1.7;
+    margin: 0 0 10px;
+  }
+  .cat-related-label {
+    background: color-mix(in srgb, var(--accent) 18%, var(--bg-elevated));
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-right: 8px;
+    padding: 2px 8px;
+  }
+  .cat-related .sep {
+    color: var(--text-muted);
+    margin: 0 6px;
   }
   .stale-note {
     background: color-mix(in srgb, var(--accent) 12%, var(--bg-elevated));
