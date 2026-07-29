@@ -2,27 +2,109 @@
 import Layout from "@/layouts/Layout.astro";
 import TeachingCard from "@/components/TeachingCard.astro";
 import { loadTeachings } from "@/lib/teachings";
+import { teachingNotes } from "@/data/teaching-notes";
 
 const collection = await loadTeachings();
 const teachings = collection.teachings;
+
+// 解説ページがある教え（id → slug）
+const noteSlugById = new Map(teachingNotes.map((n) => [n.id, n.slug] as const));
+
+// 導線セクション用: 教えの lesson を添えた一覧（notes の並び順を維持）
+const noteLinks = teachingNotes.map((n) => {
+  const t = teachings.find((x) => x.id === n.id);
+  return {
+    slug: n.slug,
+    lesson: t?.lesson ?? n.slug,
+    teaching: t?.teaching ?? "",
+    source: t?.source ?? "",
+  };
+});
 ---
 
 <Layout
   title="教え一覧 - 賢者の金融市場"
-  description="タルムードなどユダヤ古典に由来する100の教えと、その金融・投資的な解釈を一覧で。足るを知る、分散、学び続ける姿勢など。"
+  description="タルムードなどユダヤ古典に由来する100の教えと、その金融・投資的な解釈を一覧で。足るを知る、分散、学び続ける姿勢など。10件には個別の解説ページを用意しています。"
   currentTab="teachings"
 >
   <header>
     <h1>タルムードの教え</h1>
-    <p class="muted">{teachings.length}件の教え</p>
+    <p class="muted">{teachings.length}件の教え（うち{noteLinks.length}件に解説ページあり）</p>
   </header>
 
+  <section class="notes-guide">
+    <p class="notes-kicker">解説付きの教え {noteLinks.length}件</p>
+    <p class="notes-intro">
+      とくに投資や市場観察と関わりの深い教えについては、現代語での読み解き、市場・投資への応用、
+      誤読しやすい点をまとめた個別の解説ページを用意しています。
+      なお、本サイトの訳文は伝統文献の趣旨に基づく意訳です。
+    </p>
+    <ul class="notes-list">
+      {noteLinks.map((n) => (
+        <li>
+          <a href={`/teachings/${n.slug}/`}>{n.lesson}</a>
+          <span class="muted">「{n.teaching}」— {n.source}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <h2 class="all-heading">すべての教え</h2>
+
   <div class="list">
-    {teachings.map((t) => <TeachingCard teaching={t} />)}
+    {teachings.map((t) => (
+      <TeachingCard teaching={t} noteSlug={noteSlugById.get(t.id)} />
+    ))}
   </div>
 </Layout>
 
 <style>
+  .notes-guide {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    border-radius: 12px;
+    margin: 18px 0 24px;
+    padding: 16px 18px;
+  }
+
+  .notes-kicker {
+    color: var(--accent);
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .notes-intro {
+    line-height: 1.8;
+    margin: 0 0 12px;
+  }
+
+  .notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .notes-list li {
+    border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    line-height: 1.7;
+    margin-bottom: 10px;
+    padding-left: 12px;
+  }
+
+  .notes-list a {
+    font-weight: 600;
+  }
+
+  .notes-list .muted {
+    display: block;
+  }
+
+  .all-heading {
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+
   .list {
     display: flex;
     flex-direction: column;

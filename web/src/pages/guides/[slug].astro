@@ -140,6 +140,18 @@ const breadcrumbLd = {
                     </li>
                   ))}
                 </ul>
+              ) : block.type === "links" ? (
+                <nav class="inline-links" aria-label={block.title ?? "関連ページ"}>
+                  {block.title && <p class="inline-links-title">{block.title}</p>}
+                  <ul>
+                    {block.items.map((link) => (
+                      <li>
+                        <a href={link.href}>{link.label}</a>
+                        {link.note && <span class="muted"> — {link.note}</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
               ) : null,
             )
           : (section.body ?? []).map((paragraph) => <p>{paragraph}</p>)}
@@ -343,6 +355,37 @@ const breadcrumbLd = {
   }
 
   .refs-list a {
+    font-weight: 600;
+  }
+
+  /* サイト内リンク（教えの個別ページなど） */
+  .inline-links {
+    background: color-mix(in srgb, var(--accent) 7%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 10px;
+    margin: 18px 0;
+    padding: 14px 16px;
+  }
+
+  .inline-links-title {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .inline-links ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .inline-links li {
+    line-height: 1.75;
+    margin-bottom: 6px;
+  }
+
+  .inline-links a {
     font-weight: 600;
   }
 

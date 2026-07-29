@@ -1,0 +1,260 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { loadTeachings, type TalmudTeaching } from "@/lib/teachings";
+import { teachingNotes, type TeachingNote } from "@/data/teaching-notes";
+import { guideArticles } from "@/data/guides";
+
+type RelatedTeaching = { slug: string; lesson: string; teaching: string };
+type RelatedGuide = { slug: string; title: string; readingTime: string };
+
+// notes が存在する教えのみ静的生成する（薄いページの量産を避ける）
+export async function getStaticPaths() {
+  const collection = await loadTeachings();
+  const byId = new Map(collection.teachings.map((t) => [t.id, t] as const));
+  const noteById = new Map(teachingNotes.map((n) => [n.id, n] as const));
+
+  return teachingNotes
+    .filter((note) => byId.has(note.id))
+    .map((note) => {
+      const teaching = byId.get(note.id) as TalmudTeaching;
+
+      const related: RelatedTeaching[] = [];
+      for (const id of note.relatedTeachings) {
+        const rn = noteById.get(id);
+        const rt = byId.get(id);
+        if (rn && rt) {
+          related.push({ slug: rn.slug, lesson: rt.lesson, teaching: rt.teaching });
+        }
+      }
+
+      const guides: RelatedGuide[] = [];
+      for (const slug of note.relatedGuides) {
+        const a = guideArticles.find((g) => g.slug === slug);
+        if (a) {
+          guides.push({ slug: a.slug, title: a.title, readingTime: a.readingTime });
+        }
+      }
+
+      return {
+        params: { slug: note.slug },
+        props: { note, teaching, related, guides },
+      };
+    });
+}
+
+const { note, teaching, related, guides } = Astro.props as {
+  note: TeachingNote;
+  teaching: TalmudTeaching;
+  related: RelatedTeaching[];
+  guides: RelatedGuide[];
+};
+
+// サイトのルートURL と このページの絶対URL
+const siteRoot = (Astro.site ?? new URL("https://talmudfinance.com/")).href;
+const pageUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).href;
+const teachingsUrl = new URL("teachings/", siteRoot).href;
+
+const published = "2026-08-07";
+const publishedJp = "2026年8月7日";
+
+const articleLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: `${teaching.lesson} ― タルムードの教えを読み解く`,
+  description: note.description,
+  datePublished: published,
+  dateModified: published,
+  author: { "@type": "Person", name: "AI日本の裏側" },
+  publisher: {
+    "@type": "Organization",
+    name: "賢者の金融市場",
+    url: siteRoot,
+  },
+  mainEntityOfPage: pageUrl,
+  inLanguage: "ja",
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "ホーム", item: siteRoot },
+    { "@type": "ListItem", position: 2, name: "教え一覧", item: teachingsUrl },
+    { "@type": "ListItem", position: 3, name: teaching.lesson, item: pageUrl },
+  ],
+};
+---
+
+<Layout
+  title={`${teaching.lesson} ― タルムードの教えを読み解く - 賢者の金融市場`}
+  description={note.description}
+  currentTab="teachings"
+>
+  <nav class="breadcrumb" aria-label="パンくずリスト">
+    <a href="/">ホーム</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a href="/teachings/">教え一覧</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span aria-current="page">{teaching.lesson}</span>
+  </nav>
+
+  <article class="policy-page teaching-page">
+    <p class="brand-kicker">タルムードの教え #{teaching.id}</p>
+    <h1>{teaching.lesson}</h1>
+    <p class="muted teaching-meta">
+      公開 {publishedJp}　/　最終更新 {publishedJp}　/　文・編集: <a href="/about/">AI日本の裏側</a>
+    </p>
+
+    <figure class="quote-card">
+      <blockquote>「{teaching.teaching}」</blockquote>
+      <figcaption>― {teaching.source}</figcaption>
+    </figure>
+
+    <p class="source-note">
+      本サイトの訳文は伝統文献の趣旨に基づく意訳です。原典の正確な字句や、宗教的・法的な文脈における
+      解釈を示すものではありません。原典の理解を目的とする場合は、専門の解説や研究にあたってください。
+    </p>
+
+    <section class="article-section">
+      <h2>この教えを一行で見ると</h2>
+      <p>{teaching.financial_interpretation}</p>
+    </section>
+
+    <section class="article-section">
+      <h2>現代語での読み解き</h2>
+      <p>{note.modernReading}</p>
+    </section>
+
+    <section class="article-section">
+      <h2>市場・投資への応用</h2>
+      <p>{note.marketApplication}</p>
+    </section>
+
+    <section class="article-section">
+      <h2>誤読しやすい点</h2>
+      <p>{note.misreading}</p>
+    </section>
+
+    <aside class="article-note">
+      <h2>このページの位置づけ</h2>
+      <p>
+        本ページは、古典の言葉を市場観察の姿勢として読み替えるための学習コンテンツです。
+        特定の金融商品の売買、保有、解約を勧めるものではなく、宗教的な実践を勧めるものでもありません。
+        実際の判断は、ご自身の目的、資産状況、リスク許容度を確認したうえで行ってください。
+      </p>
+    </aside>
+
+    <section class="related">
+      <h2>関連する教え</h2>
+      <ul>
+        {related.map((r) => (
+          <li>
+            <a href={`/teachings/${r.slug}/`}>{r.lesson}</a>
+            <span class="muted">「{r.teaching}」</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="related">
+      <h2>あわせて読みたい記事</h2>
+      <ul>
+        {guides.map((g) => (
+          <li>
+            <a href={`/guides/${g.slug}/`}>{g.title}</a>
+            <span class="muted">（{g.readingTime}）</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <p class="back-link"><a href="/teachings/">教え一覧へ戻る</a></p>
+  </article>
+
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+</Layout>
+
+<style>
+  .breadcrumb {
+    font-size: 0.82rem;
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .breadcrumb .sep {
+    margin: 0 6px;
+    color: var(--text-muted);
+  }
+
+  .teaching-meta {
+    margin-top: 0;
+  }
+
+  .quote-card {
+    background: color-mix(in srgb, var(--accent) 10%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    margin: 20px 0 10px;
+    padding: 16px 18px;
+  }
+
+  .quote-card blockquote {
+    font-size: 1.12rem;
+    font-weight: 600;
+    line-height: 1.9;
+    margin: 0;
+  }
+
+  .quote-card figcaption {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    margin-top: 10px;
+  }
+
+  .source-note {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    line-height: 1.8;
+    margin: 0 0 4px;
+  }
+
+  .related {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    margin-top: 28px;
+    padding-top: 16px;
+  }
+
+  .related h2 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .related ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .related li {
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  .related a {
+    font-weight: 600;
+  }
+
+  .related .muted {
+    display: block;
+  }
+</style>

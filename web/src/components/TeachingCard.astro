@@ -4,8 +4,15 @@ interface Props {
   teaching: TalmudTeaching;
   featured?: boolean;
   showDate?: boolean;
+  /** 解説ページ（/teachings/{slug}/）がある教えのみ指定する */
+  noteSlug?: string;
 }
-const { teaching, featured = false, showDate = false } = Astro.props;
+const {
+  teaching,
+  featured = false,
+  showDate = false,
+  noteSlug,
+} = Astro.props;
 
 const today = new Date();
 const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
@@ -21,6 +28,11 @@ const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getD
   <p><strong>{featured ? "本日の教訓" : ""}: {teaching.lesson}</strong></p>
   {featured && <p><strong>金融視点での解釈</strong></p>}
   <p>{teaching.financial_interpretation}</p>
+  {noteSlug && (
+    <p class="note-link">
+      <a href={`/teachings/${noteSlug}/`}>この教えを詳しく読む →</a>
+    </p>
+  )}
 </article>
 
 <style>
@@ -38,5 +50,13 @@ const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getD
     border: none;
     border-top: 1px solid rgba(34, 32, 28, 0.25);
     margin: 0.8em 0;
+  }
+  .note-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0.9em 0 0;
+  }
+  .note-link a {
+    color: var(--accent);
   }
 </style>
