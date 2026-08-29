@@ -3,76 +3,219 @@ import Layout from "@/layouts/Layout.astro";
 import TeachingCard from "@/components/TeachingCard.astro";
 import QuoteRow from "@/components/QuoteRow.astro";
 import MarketInsightCard from "@/components/MarketInsightCard.astro";
-import { guides } from "@/data/guides";
+import { guides, guideCategories } from "@/data/guides";
+import { teachingNotes } from "@/data/teaching-notes";
 import { loadTeachings, getTodaysTeaching } from "@/lib/teachings";
 import { buildMarketInsight, fetchAll } from "@/lib/market";
 
 const collection = await loadTeachings();
 const teaching = getTodaysTeaching(collection.teachings);
 
+// ---- 「4つのテーマで学ぶ」----------------------------------------------
+// カテゴリの説明文と、入口として推す記事の slug をこのページの定数として持つ。
+// 記事のタイトル・説明・本数は guides.ts から解決するため、記事側を編集しても追随する。
+const categoryNotes: Record<string, { lead: string; featured: string[] }> = {
+  "市場の見方・基礎": {
+    lead:
+      "相場のニュースを前にして、まず何をどの順番で見ればよいのかを扱うテーマです。株価だけを追いかけていると、同じ下落でも、金利が原因なのか、為替が原因なのか、単に世界中がリスクを避けているだけなのかを区別できません。ここでは、朝の数分で終えられる確認の手順と、上昇と下落を繰り返すサイクルとの付き合い方を扱います。市場の見方をこれから組み立てる方の、最初の一歩に向いたテーマです。",
+    featured: ["market-reading", "market-cycles"],
+  },
+  "指標を理解する": {
+    lead:
+      "日経平均、TOPIX、ドル円、長期金利、VIX。ニュースに毎日登場するこれらの数字が、そもそも何を測っているのかを一つずつ解きほぐすテーマです。指数は算出方法が違えば同じ日でも動きがずれますし、金利は満期ごとに映しているものが変わります。数字そのものを覚えるより、その数字が何を含み、何を切り捨てているのかを知ることを目的にしています。",
+    featured: ["what-is-nikkei", "dollar-yen", "vix-fear-index"],
+  },
+  "投資の考え方": {
+    lead:
+      "分散、複利、積立、リスク許容度、インフレ、行動バイアス。値動きの読み方ではなく、自分の側の設計を扱うテーマです。市場は自分の都合に合わせて動いてはくれませんが、どれだけのリスクを取るのか、いつまでに何のために増やすのか、下落した日にどう振る舞うのかは、あらかじめ決めておくことができます。ここが決まっているほど、日々の数字に振り回される場面は減っていきます。",
+    featured: ["compound-interest", "diversification", "risk-tolerance"],
+  },
+  "タルムードと投資": {
+    lead:
+      "このサイトの独自性がもっとも出るテーマです。タルムードは、一つの問いに複数の意見を並べて記録し、結論を急がずに議論そのものを残すという形をとった文献です。その読み方は、同じ出来事に強気の解釈と慎重な解釈が同時に成り立つ市場と、意外なほど相性がよいものです。古典を投資の教科書として使うのではなく、判断を急がないための型として使う視点を扱います。",
+    featured: ["talmud-and-market", "enough-is-wealth"],
+  },
+};
+
+const guideBySlug = new Map(guides.map((g) => [g.slug, g] as const));
+
+const themes = guideCategories
+  .map((category) => {
+    const items = guides.filter((g) => g.category === category);
+    const note = categoryNotes[category];
+    // 定数で指定した記事を優先し、足りなければそのカテゴリの残りから補って最大3本にする
+    const picked = (note?.featured ?? []).flatMap((slug) => {
+      const g = guideBySlug.get(slug);
+      return g && g.category === category ? [g] : [];
+    });
+    for (const g of items) {
+      if (picked.length >= 3) break;
+      if (!picked.some((p) => p.slug === g.slug)) picked.push(g);
+    }
+    return { category, lead: note?.lead ?? "", items: picked, total: items.length };
+  })
+  .filter((t) => t.items.length > 0);
+
+// ---- 「タルムードの教えを深く読む」--------------------------------------
+// 教えの原文・出典は Android アセットの JSON（loadTeachings）を唯一の情報源とする。
+const featuredNoteSlugs = [
+  "enough",
+  "three-way-split",
+  "learning-outlasts-wealth",
+  "slow-wealth",
+  "learn-from-all",
+];
+const teachingById = new Map(collection.teachings.map((t) => [t.id, t] as const));
+const noteBySlug = new Map(teachingNotes.map((n) => [n.slug, n] as const));
+
+const featuredTeachings = featuredNoteSlugs.flatMap((slug) => {
+  const note = noteBySlug.get(slug);
+  const source = note ? teachingById.get(note.id) : undefined;
+  return note && source
+    ? [{
+        slug: note.slug,
+        lesson: source.lesson,
+        teaching: source.teaching,
+        source: source.source,
+      }]
+    : [];
+});
+
+// ---- 市況（ページ下部）--------------------------------------------------
 const allQuotes = await fetchAll();
 const insight = buildMarketInsight(allQuotes);
-const summarySymbols = [
-  "^N225",
-  "1306.T",
-  "^GSPC",
-  "^IXIC",
-  "JPY=X",
-  "^TNX",
-  "^VIX",
-  "GC=F",
-  "CL=F",
-  "BTC-USD",
-];
+// トップでは代表4銘柄のみ。全銘柄はマーケットページに置く。
+const summarySymbols = ["^N225", "^GSPC", "JPY=X", "^TNX"];
 const summary = summarySymbols
   .map((s) => allQuotes.find((q) => q.symbol === s))
   .filter((q): q is NonNullable<typeof q> => q !== undefined);
 ---
 
 <Layout
-  title="賢者の金融市場 - タルムードに学ぶ"
-  description="タルムードの教えと、日経平均・米国株・為替・金利・暗号資産などの主要指標を毎日1画面で。落ち着いて相場を学ぶための無料の学習サイトです。"
+  title="賢者の金融市場 - タルムードに学ぶ市場の読み方"
+  description={`タルムードなど古典の知恵と、市場を落ち着いて読むための解説記事を届ける学習サイト。指数・為替・金利の読み方から、分散・複利・リスク許容度の考え方まで、全${guides.length}本の記事と教えの解説${teachingNotes.length}ページを無料で公開しています。`}
   currentTab="today"
 >
   <header class="brand-header">
     <p class="brand-kicker">タルムードに学ぶ</p>
     <h1>賢者の金融市場</h1>
-    <p class="brand-subtitle">古代の知恵と今日の市場データを、毎朝1画面で。</p>
+    <p class="brand-subtitle">
+      古代の知恵と市場の数字を並べて読み、相場を落ち着いて学ぶための場所です。
+    </p>
   </header>
+
+  <section class="intro-section">
+    <h2>このサイトについて</h2>
+    <p>
+      「賢者の金融市場」は、古代ユダヤの口伝律法をまとめたタルムードをはじめとする古典の言葉と、
+      日々の市場データを並べて読むための学習サイトです。運営しているのは、金融の資格を持つ専門家ではなく、
+      一人の個人投資家であり開発者でもある<a href="/about/">「AI日本の裏側」</a>です。
+      自分自身が相場を学ぶ過程で、値動きにいちいち反応して疲れてしまう時期を通り、
+      数字の背景を落ち着いて眺めるための型が必要だと感じたことが、このサイトの出発点になっています。
+    </p>
+    <p>
+      提供しているものは大きく三つあります。ひとつめは、指数・為替・金利・リスク指標といった数字が
+      何を測っているのかを解説する記事です。ふたつめは、タルムードなどの古典に伝わる100件の教えと、
+      その言葉を市場観察の姿勢として読み替える解説です。みっつめが、学んだ視点を確かめるための
+      市場データの一覧になります。優先順位もこの順番で、データは主役ではなく、
+      記事と教えを確かめるための材料という位置づけにしています。
+    </p>
+    <p>
+      なお本サイトは、学習と情報提供を目的としています。特定の銘柄や金融商品を推奨することはなく、
+      値動きの予想も行いません。掲載している数値は一般に知られた概数や計算例であり、投資助言ではありません。
+      実際の判断は、ご自身の目的と資産状況を確認したうえで行ってください。
+    </p>
+  </section>
 
   <TeachingCard teaching={teaching} featured showDate />
 
-  <section class="learning-section">
-    <div>
-      <p class="section-kicker">市場を読むための学び</p>
-      <h2>数字の背景を落ち着いて読む</h2>
-      <p>
-        毎日の値動きを売買サインとして急いで受け取るのではなく、株価、為替、金利、
-        リスク指標を組み合わせて観察するための記事を用意しています。
-      </p>
-    </div>
-    <div class="guide-grid compact">
-      {guides.slice(0, 3).map((guide) => (
-        <a class="guide-card" href={`/guides/${guide.slug}/`}>
-          <span>{guide.readingTime}</span>
-          <h3>{guide.title}</h3>
-          <p>{guide.description}</p>
-        </a>
-      ))}
-    </div>
-    <p class="guide-more"><a href="/guides/">すべての記事を見る</a></p>
+  <section class="themes-section">
+    <h2>4つのテーマで学ぶ</h2>
+    <p class="themes-intro">
+      記事は4つのテーマに分けて整理しています。どこから読んでも構いませんが、
+      それぞれのテーマがサイトの中でどんな役割を持っているかを先に知っておくと、
+      いま自分に必要な記事にたどり着きやすくなります。現在は全{guides.length}本を公開しています。
+    </p>
+
+    {themes.map((theme) => (
+      <div class="theme-block">
+        <h3>{theme.category}</h3>
+        <p class="theme-lead">{theme.lead}</p>
+        <div class="guide-grid compact">
+          {theme.items.map((guide) => (
+            <a class="guide-card" href={`/guides/${guide.slug}/`}>
+              <span>{guide.readingTime}</span>
+              <h4>{guide.title}</h4>
+              <p>{guide.description}</p>
+            </a>
+          ))}
+        </div>
+        <p class="theme-more">
+          <a href="/guides/">このテーマを含む記事一覧を見る（{theme.category}は全{theme.total}本）</a>
+        </p>
+      </div>
+    ))}
   </section>
 
-  <MarketInsightCard insight={insight} />
+  <section class="teachings-section">
+    <h2>タルムードの教えを深く読む</h2>
+    <p>
+      サイトには、タルムードなどユダヤ古典に由来する100件の教えを収録しています。
+      そのうち市場や投資と関わりの深い{teachingNotes.length}件については、現代語での読み解き、
+      市場・投資への応用、そして誤読しやすい点までを掘り下げた個別の解説ページを用意しました。
+      教えを標語として消費するのではなく、どこまでが本文の主張で、どこからが現代の読み替えなのかを
+      分けて示すことを重視しています。古い言葉がそのまま現代の投資判断に当てはまることはまれですが、
+      判断を急ぎたくなったときに立ち止まる手がかりとしては、いまも十分に働きます。
+      なお、本サイトの訳文は伝統文献の趣旨に基づく意訳であり、
+      原典の正確な字句や、宗教的・法的な文脈における解釈を示すものではありません。
+      まずは次の5件から読んでみてください。
+    </p>
+    <ul class="teaching-links">
+      {featuredTeachings.map((t) => (
+        <li>
+          <a href={`/teachings/${t.slug}/`}>{t.lesson}</a>
+          <span class="muted">「{t.teaching}」— {t.source}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="teaching-more"><a href="/teachings/">100件の教えをすべて見る</a></p>
+  </section>
 
-  <h2>主要指標サマリー</h2>
-  <div class="card">
-    {summary.length === 0 ? (
-      <p class="muted">市場データを取得できませんでした。</p>
-    ) : (
-      summary.map((q) => <QuoteRow quote={q} />)
-    )}
-  </div>
+  <section class="start-cta">
+    <h2>はじめての方へ</h2>
+    <p>
+      どこから手をつければよいか迷う場合は、「はじめての方へ」のページをご覧ください。
+      このサイトの使い方と、記事{guides.length}本・教えの解説{teachingNotes.length}ページを
+      どの順番で読むと無理がないかを、リンク付きの順序としてまとめています。
+      投資をこれから学ぶ方が、遠回りせずに一巡できるように並べたものです。
+      読む順番に迷っている時間は、そのまま学び始めるまでの遅れになります。
+    </p>
+    <p class="start-link"><a href="/start/">はじめての方へ ― このサイトの歩き方 →</a></p>
+  </section>
+
+  <section class="market-section">
+    <h2 class="section-heading">今日の市場を確かめる</h2>
+    <p class="market-note">
+      ここから下は、記事で学んだ視点を実際の数字で確かめるための参考データです。
+      売買のサインではなく、記事の内容を読み返すきっかけとして眺めてください。
+      大きく動いた指標があった日は、その動きを説明できる記事はどれかを探してみると、
+      学んだことが定着しやすくなります。
+    </p>
+
+    <MarketInsightCard insight={insight} />
+
+    <h3 class="summary-heading">主要指標サマリー</h3>
+    <div class="card">
+      {summary.length === 0 ? (
+        <p class="muted">市場データを取得できませんでした。</p>
+      ) : (
+        summary.map((q) => <QuoteRow quote={q} />)
+      )}
+    </div>
+    <p class="market-more">
+      <a href="/market/">マーケットページで全銘柄を見る</a>
+    </p>
+  </section>
 </Layout>
 
 <style>
@@ -98,23 +241,160 @@ const summary = summarySymbols
     margin: 0;
   }
 
-  .learning-section {
-    margin: 22px 0 24px;
+  .intro-section {
+    background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 12px;
+    margin: 0 0 26px;
+    padding: 16px 18px;
   }
 
-  .section-kicker {
+  .intro-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .intro-section p {
+    line-height: 1.85;
+    margin: 0 0 12px;
+  }
+
+  .intro-section p:last-child {
     color: var(--text-muted);
-    font-size: 0.82rem;
-    font-weight: 700;
-    margin: 0 0 2px;
+    font-size: 0.9rem;
+    margin-bottom: 0;
   }
 
-  .learning-section > div:first-child p:last-child {
-    margin-top: 0;
+  .section-heading {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
   }
 
-  .guide-more {
-    margin: 8px 0 0;
+  .themes-section {
+    margin: 28px 0 8px;
+  }
+
+  .themes-intro {
+    line-height: 1.85;
+    margin: 0 0 6px;
+  }
+
+  .theme-block {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    margin-top: 22px;
+    padding-top: 16px;
+  }
+
+  .theme-block h3 {
+    font-size: 1.12rem;
+    margin-bottom: 8px;
+  }
+
+  /* カード見出しは h4（h2 セクション > h3 テーマ > h4 記事）。
+     global.css の .guide-card h3 と同じ見た目にそろえる。 */
+  .guide-card h4 {
+    color: var(--accent);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin: 0 0 6px;
+  }
+
+  .theme-lead {
+    line-height: 1.85;
+    margin: 0;
+  }
+
+  .theme-more {
+    font-size: 0.86rem;
+    margin: 10px 0 0;
+    text-align: right;
+  }
+
+  .teachings-section {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    margin-top: 30px;
+    padding-top: 18px;
+  }
+
+  .teachings-section p {
+    line-height: 1.85;
+  }
+
+  .teaching-links {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+
+  .teaching-links li {
+    border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    line-height: 1.7;
+    margin-bottom: 10px;
+    padding-left: 12px;
+  }
+
+  .teaching-links a {
+    font-weight: 600;
+  }
+
+  .teaching-links .muted {
+    display: block;
+  }
+
+  .teaching-more {
+    font-size: 0.86rem;
+    margin: 12px 0 0;
+    text-align: right;
+  }
+
+  .start-cta {
+    background: var(--bg-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent) 36%, transparent);
+    border-radius: 12px;
+    margin: 30px 0 8px;
+    padding: 16px 18px;
+  }
+
+  .start-cta h2 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .start-cta p {
+    line-height: 1.85;
+    margin: 0 0 12px;
+  }
+
+  .start-cta p:last-child {
+    margin-bottom: 0;
+  }
+
+  .start-link {
+    font-weight: 600;
+  }
+
+  .market-section {
+    border-top: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    margin-top: 32px;
+    padding-top: 18px;
+  }
+
+  .market-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.8;
+    margin: 0 0 14px;
+  }
+
+  .summary-heading {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+  }
+
+  .market-more {
+    font-size: 0.88rem;
+    margin: 0;
     text-align: right;
   }
 </style>

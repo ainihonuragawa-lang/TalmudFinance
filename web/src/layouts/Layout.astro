@@ -5,6 +5,12 @@ interface Props {
   title?: string;
   description?: string;
   currentTab?: "today" | "market" | "guides" | "teachings";
+  /**
+   * 検索インデックスから外すページで true にする。
+   * robots.txt では Disallow せず（クローラが noindex を読めなくなるため）、
+   * follow を付けて内部リンクは辿らせる。
+   */
+  noindex?: boolean;
 }
 
 const {
@@ -12,6 +18,7 @@ const {
   description =
     "古代ユダヤ・タルムードの知恵と、日本株・米国株・為替・金利などの市場データを毎日1画面で。落ち着いて相場を学ぶための学習サイトです。",
   currentTab,
+  noindex = false,
 } = Astro.props;
 
 // ローカル: "/" / GitHub Pages: "/TalmudFinance/"
@@ -52,6 +59,7 @@ const organizationLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#22201C" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />

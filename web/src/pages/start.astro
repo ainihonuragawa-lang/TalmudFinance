@@ -1,0 +1,405 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { guides, guideCategories } from "@/data/guides";
+import { teachingNotes } from "@/data/teaching-notes";
+import { loadTeachings } from "@/lib/teachings";
+
+const collection = await loadTeachings();
+const teachingById = new Map(collection.teachings.map((t) => [t.id, t] as const));
+const guideBySlug = new Map(guides.map((g) => [g.slug, g] as const));
+
+// ---- 読む順序の提案 ------------------------------------------------------
+// 記事のタイトル・読了目安は guides.ts から解決する。ここには順序と一言だけを持つ。
+const steps: {
+  title: string;
+  lead: string;
+  items: { slug: string; note: string }[];
+}[] = [
+  {
+    title: "ステップ1　市場の全体像をつかむ",
+    lead:
+      "最初に必要なのは、個別の予想ではなく、見る対象と順番を決めることです。株価・為替・金利という三つの柱が、それぞれ何を表しているのかを押さえます。ここを飛ばすと、あとの記事がどれも「知らない用語の説明」に見えてしまいます。",
+    items: [
+      {
+        slug: "market-reading",
+        note: "見る順番を決めるところから始めます。毎朝5分で終える確認手順の型が手に入ります。",
+      },
+      {
+        slug: "what-is-nikkei",
+        note: "「株価が上がった」の中身を、日経平均とTOPIXの違いから分解します。",
+      },
+      {
+        slug: "dollar-yen",
+        note: "円安・円高が誰にとって何を意味するのかを、立場ごとに整理します。",
+      },
+      {
+        slug: "yield-curve",
+        note: "金利という、あらゆる資産価格の背後にある重力のような存在を知る回です。",
+      },
+    ],
+  },
+  {
+    title: "ステップ2　数字どうしの関係を読む",
+    lead:
+      "個々の指標が分かってきたら、次は組み合わせです。市場のニュースが分かりにくいのは、たいてい一つの数字ではなく複数の力が同時に働いているからです。ここでは、関係として読む練習と、相場が巡るものであるという前提を身につけます。",
+    items: [
+      {
+        slug: "interest-rate-fx",
+        note: "金利・為替・株価を別々にではなく、つながりとして読む練習です。",
+      },
+      {
+        slug: "vix-fear-index",
+        note: "市場の警戒感を測る温度計の見方と、その限界を確認します。",
+      },
+      {
+        slug: "market-cycles",
+        note: "上昇と下落が巡ることを前提に、局面ごとの空気と心理を知っておきます。",
+      },
+    ],
+  },
+  {
+    title: "ステップ3　自分の側の設計を決める",
+    lead:
+      "市場の見方が一通りそろったら、視線を自分に向けます。相場は誰の都合にも合わせてくれませんが、どれだけのリスクを取るか、何をいつまでに増やすかは自分で決められます。この段が、実際にいちばん効きます。",
+    items: [
+      {
+        slug: "risk-tolerance",
+        note: "最初に決めるべきは相場観ではなく、自分が平静でいられる下落幅です。",
+      },
+      {
+        slug: "diversification",
+        note: "「財を三分せよ」という古典の助言を、現代の資産クラスに置き直します。",
+      },
+      {
+        slug: "compound-interest",
+        note: "時間を味方にする仕組みと、その効き方の実際を数字で確かめます。",
+      },
+      {
+        slug: "dollar-cost-averaging",
+        note: "積立が効く場面と効きにくい場面を、購入シミュレーションで見比べます。",
+      },
+      {
+        slug: "inflation-basics",
+        note: "現金のまま置いておくことにもリスクがあるという視点を足します。",
+      },
+    ],
+  },
+  {
+    title: "ステップ4　判断のクセと向き合う",
+    lead:
+      "最後は、知識ではなく態度の話です。市場について学んだことは、下落した日にそれを思い出せなければ働きません。心理のクセを知り、意志ではなく仕組みで対処する。この段でタルムードの視点が実務に接続します。",
+    items: [
+      {
+        slug: "behavioral-bias",
+        note: "判断を歪める心理のクセを知り、意志ではなく仕組みで抑える方法へ。",
+      },
+      {
+        slug: "risk-management",
+        note: "感情と行動のあいだに「間」を作るための、事前のルール作りです。",
+      },
+      {
+        slug: "talmud-and-market",
+        note: "ここまでの視点を、結論を急がない読み方としてまとめ直します。",
+      },
+      {
+        slug: "enough-is-wealth",
+        note: "「いくらで十分か」を決めることが、取るべきリスクの上限を決めます。",
+      },
+    ],
+  },
+];
+
+// guides.ts に実在する記事だけを残す（slug を消しても壊れないように）
+const resolvedSteps = steps.map((step) => ({
+  title: step.title,
+  lead: step.lead,
+  items: step.items.flatMap((item) => {
+    const guide = guideBySlug.get(item.slug);
+    return guide ? [{ ...item, guide }] : [];
+  }),
+}));
+
+// 順序に含まれなかった記事（guides.ts に追記された記事）は末尾で拾う
+const orderedSlugs = new Set(
+  resolvedSteps.flatMap((s) => s.items.map((i) => i.slug)),
+);
+const remainingGuides = guides.filter((g) => !orderedSlugs.has(g.slug));
+
+// テーマ別の本数（「各テーマの学び方」用）
+const themeCounts = guideCategories.map((category) => ({
+  category,
+  count: guides.filter((g) => g.category === category).length,
+}));
+
+// ---- 教えの解説ページ一覧 -------------------------------------------------
+const noteLinks = teachingNotes.flatMap((n) => {
+  const t = teachingById.get(n.id);
+  return t
+    ? [{ slug: n.slug, lesson: t.lesson, teaching: t.teaching, source: t.source }]
+    : [];
+});
+---
+
+<Layout
+  title="はじめての方へ ― このサイトの歩き方 | 賢者の金融市場"
+  description={`「賢者の金融市場」の使い方と、投資をこれから学ぶ方に向けた読む順序の提案。市場の全体像から数字の関係、自分のリスク設計、判断のクセまで、記事${guides.length}本と教えの解説${noteLinks.length}ページをステップ順にたどれます。`}
+>
+  <article class="policy-page">
+    <p class="brand-kicker">はじめての方へ</p>
+    <h1>このサイトの歩き方</h1>
+
+    <p>
+      「賢者の金融市場」へようこそ。このページは、はじめて訪れた方が
+      「どこから読めばよいか」で迷わないための案内です。
+      サイトには記事{guides.length}本と、タルムードなど古典の教えの解説{noteLinks.length}ページがありますが、
+      上から順に全部を読む必要はありません。以下では、無理のない順序と、
+      それぞれの記事がどんな役割を担っているのかを示します。
+    </p>
+
+    <section class="article-section">
+      <h2>このサイトの使い方</h2>
+      <p>
+        本サイトは、大きく三つの部分でできています。ひとつめは、市場の数字の意味と読み方を扱う
+        <a href="/guides/">記事</a>です。ふたつめは、タルムードなどユダヤ古典に由来する100件の
+        <a href="/teachings/">教え</a>と、そのうち投資と関わりの深いものの解説ページです。
+        みっつめが、学んだ視点を実際の数字で確かめるための
+        <a href="/market/">マーケットページ</a>になります。
+      </p>
+      <p>
+        おすすめの回り方は、記事で見方を身につけ、教えで姿勢を整え、
+        最後にマーケットページの数字で確かめる、という順序です。逆に、数字から入ると、
+        値動きの理由を後から探す読み方になりやすく、ニュースの見出しに引っぱられがちになります。
+        急ぐ必要はありません。1日に1本ずつ読んでも、2週間ほどで一巡できる分量です。
+      </p>
+      <p>
+        画面下のタブから、いつでも「今日」「マーケット」「記事」「教え」に移動できます。
+        毎日訪れる場合は、トップページの「今日のタルムード」だけを読む日があってもかまいません。
+        続けやすさのほうが、一度にたくさん読むことより大切だと考えています。
+      </p>
+    </section>
+
+    <section class="article-section">
+      <h2>投資を学ぶ順序の提案</h2>
+      <p>
+        記事{guides.length}本を、4つのステップに並べ直しました。前のステップが後のステップの
+        前提になっているので、順に読むといちばん引っかかりが少なくなります。
+        すでに知っている項目は飛ばして構いません。各記事は約9分の読み物です。
+      </p>
+
+      {resolvedSteps.map((step) => (
+        <div class="step-block">
+          <h3>{step.title}</h3>
+          <p class="step-lead">{step.lead}</p>
+          <ol class="step-list">
+            {step.items.map((item) => (
+              <li>
+                <a href={`/guides/${item.slug}/`}>{item.guide.title}</a>
+                <span class="muted">{item.note}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))}
+
+      {remainingGuides.length > 0 && (
+        <div class="step-block">
+          <h3>そのほかの記事</h3>
+          <p class="step-lead">
+            上の順序に含めていない記事です。興味のあるところから読んでください。
+          </p>
+          <ol class="step-list">
+            {remainingGuides.map((g) => (
+              <li>
+                <a href={`/guides/${g.slug}/`}>{g.title}</a>
+                <span class="muted">{g.description}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </section>
+
+    <section class="article-section">
+      <h2>各テーマの学び方</h2>
+      <p>
+        記事は{themeCounts.length}つのテーマに分類してあります。ステップ順に読み終えたあと、
+        あるいは途中で寄り道したくなったときは、テーマ単位で読み返すのが便利です。
+      </p>
+      <ul class="theme-counts">
+        {themeCounts.map((t) => (
+          <li><strong>{t.category}</strong>（全{t.count}本）</li>
+        ))}
+      </ul>
+      <p>
+        「市場の見方・基礎」は、観察の手順そのものを扱います。手順は一度決めたら、
+        しばらく変えないほうが比較ができるようになります。「指標を理解する」は、
+        用語の意味を確認するための辞書のように使えます。ニュースで分からない言葉が出たら、
+        その都度戻ってくる読み方が向いています。
+      </p>
+      <p>
+        「投資の考え方」は、読むだけでなく、自分の数字を書き出しながら進めると効果が変わります。
+        必要な金額、期限、耐えられる下落幅を紙かメモアプリに書いておくと、
+        相場が荒れた日に立ち返る場所ができます。「タルムードと投資」は、
+        急いで読む必要はありません。判断に迷ったときに開くと、意味が違って見えるはずです。
+        一覧は<a href="/guides/">記事の一覧ページ</a>にまとまっています。
+      </p>
+    </section>
+
+    <section class="article-section">
+      <h2>タルムードの教えをどう使うか</h2>
+      <p>
+        タルムードは、投資の教科書ではありません。一つの問いに複数の意見を並べて記録し、
+        結論を急がずに議論そのものを残す、という形をとった古典です。
+        本サイトがこの文献を扱うのは、その読み方が市場の観察と相性がよいからです。
+        同じ株高に強気の解釈と慎重な解釈が同時に成り立つ状況は、市場では日常的に起こります。
+        どちらか一方に決めてしまう前に、両方を書き留めておく。その姿勢を借りています。
+      </p>
+      <p>
+        教えの使い方としておすすめなのは、判断を下す直前に一つ読むことです。
+        買いたい、売りたいという気持ちが強いときほど、古い言葉が働きます。
+        以下の{noteLinks.length}件には、現代語での読み解き、市場・投資への応用、
+        誤読しやすい点をまとめた個別の解説ページがあります。
+        なお、本サイトの訳文は伝統文献の趣旨に基づく意訳であり、
+        原典の正確な字句や宗教的な解釈を示すものではありません。
+      </p>
+      <ul class="note-list">
+        {noteLinks.map((n) => (
+          <li>
+            <a href={`/teachings/${n.slug}/`}>{n.lesson}</a>
+            <span class="muted">「{n.teaching}」— {n.source}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="note-more">
+        <a href="/teachings/">100件の教えをすべて見る</a>
+      </p>
+    </section>
+
+    <section class="article-section">
+      <h2>マーケットページの使い方</h2>
+      <p>
+        <a href="/market/">マーケットページ</a>には、日本株・米国株・ETF・為替・暗号資産・商品や
+        マクロ指標を並べています。ここは学んだ視点を確かめるための場所であり、
+        売買のタイミングを探すための場所ではありません。
+        記事を読んだあとで眺めると、「今日はどの力で動いているのか」を自分に問う練習ができます。
+      </p>
+      <p>
+        表示している値には遅延や欠損が起こることがあり、取得できなかった銘柄は
+        前回取得した値を「前回値」と明示して表示しています。
+        正確な価格や約定に関わる情報は、証券会社や取引所などの公式情報でご確認ください。
+      </p>
+    </section>
+
+    <aside class="article-note">
+      <h2>読む前に知っておいていただきたいこと</h2>
+      <p>
+        本サイトは、学習と情報提供を目的とした個人運営のサイトです。
+        金融商品取引法上の投資助言ではなく、特定の銘柄・金融商品の売買、保有、解約を
+        勧めるものではありません。将来の値動きについての予想も行いません。
+      </p>
+      <p>
+        記事に掲載している数値は、計算の考え方を示すための概算・計算例、
+        または一般に知られた概数です。実際の商品には手数料や税金がかかり、
+        結果は前提の置き方によって変わります。歴史的な水準に触れる場合も、
+        おおよその数として扱ってください。
+      </p>
+      <p>
+        投資には元本割れの可能性があります。最終的な判断は、ご自身の目的、資産状況、
+        リスク許容度を確認したうえで行ってください。運営者については
+        <a href="/about/">このサイトについて</a>、免責の詳細は
+        <a href="/disclaimer/">免責事項</a>をご覧ください。
+      </p>
+    </aside>
+
+    <p class="back-link">
+      <a href="/guides/">記事の一覧へ</a>
+      <span aria-hidden="true">／</span>
+      <a href="/teachings/">教えの一覧へ</a>
+      <span aria-hidden="true">／</span>
+      <a href="/">トップページへ</a>
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .step-block {
+    background: var(--bg-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 12px;
+    margin-top: 18px;
+    padding: 16px 18px;
+  }
+
+  .step-block h3 {
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+  }
+
+  .step-lead {
+    line-height: 1.85;
+    margin: 0 0 12px;
+  }
+
+  .step-list {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .step-list li {
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .step-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .step-list a {
+    font-weight: 600;
+  }
+
+  .step-list .muted {
+    display: block;
+  }
+
+  .theme-counts {
+    margin: 0 0 12px;
+    padding-left: 1.2rem;
+  }
+
+  .theme-counts li {
+    line-height: 1.8;
+  }
+
+  .note-list {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+  }
+
+  .note-list li {
+    border-left: 3px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    line-height: 1.7;
+    margin-bottom: 10px;
+    padding-left: 12px;
+  }
+
+  .note-list a {
+    font-weight: 600;
+  }
+
+  .note-list .muted {
+    display: block;
+  }
+
+  .note-more {
+    font-size: 0.88rem;
+    margin: 12px 0 0;
+    text-align: right;
+  }
+
+  .back-link span {
+    color: var(--text-muted);
+    margin: 0 6px;
+  }
+</style>
